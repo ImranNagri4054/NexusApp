@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <link rel="stylesheet" href="./register.css">
+</head>
+
+<body>
+    <div id="header"></div>
+    <div class="reg-wrapper" style="padding-top: 230px;">
+        <div class="reg-card">
+
+            <h2 class="reg-title">Create Your Account</h2>
+            <p class="reg-subtitle">
+                Join the Nexus Journal community to submit and manage your research articles
+            </p>
+
+            <form id="reg-form">
+
+                <div class="reg-row">
+                    <div class="reg-field">
+                        <label>First Name *</label>
+                        <input type="text" id="reg-first-name">
+                    </div>
+                    <div class="reg-field">
+                        <label>Last Name *</label>
+                        <input type="text" id="reg-last-name">
+                    </div>
+                </div>
+
+                <div class="reg-field">
+                    <label>Email Address *</label>
+                    <input type="email" id="reg-email">
+                </div>
+
+                <div class="reg-field">
+                    <label>Institution / Organization *</label>
+                    <input type="text" id="reg-institution">
+                </div>
+
+                <div class="reg-field">
+                    <label>ORCID ID (Optional)</label>
+                    <input type="text" id="reg-orcid">
+                </div>
+
+                <div class="reg-row">
+                    <div class="reg-field">
+                        <label>Password *</label>
+                        <input type="password" id="reg-password">
+                    </div>
+                    <div class="reg-field">
+                        <label>Confirm Password *</label>
+                        <input type="password" id="reg-confirm-password">
+                    </div>
+                </div>
+
+                <div class="reg-field">
+                    <label>Research Interests *</label>
+                    <input type="text" id="reg-interests">
+                </div>
+
+                <div class="reg-checkbox">
+                    <input type="checkbox" id="reg-terms">
+                    <label>I agree to the Terms of Service and Privacy Policy *</label>
+                </div>
+
+                <div class="reg-checkbox">
+                    <input type="checkbox" id="reg-newsletter">
+                    <label>Subscribe to newsletter</label>
+                </div>
+
+                <div class="reg-checkbox">
+                    <input type="checkbox" id="reg-reviewer">
+                    <label>I am interested in serving as a peer reviewer</label>
+                </div>
+
+                <button type="submit" class="reg-btn">Create Account</button>
+
+            </form>
+
+            <p class="reg-footer">
+                Already have an account? <a href="./login.html">Sign in here</a>
+            </p>
+
+        </div>
+    </div>
+    <div id="footer"></div>
+
+    <script src="./app.js"></script>
+    <script src="./footer.js"></script>
+    <script src="./header.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Publication Fees</title>
+
+<!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- Google Font (same clean journal style) -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="./lbar.css">
+</head>
+<body>
+    <div id="header"></div>
+<section class="public-section" id="public-fees">
+    <div class="public-container" style="padding-top: 180px" >
+
+        <h2 class="public-heading">Publication Fees</h2>
+        <p class="public-text">
+            The Nexus Journal operates on an open-access model. Authors pay an Article Processing Charge (APC)
+            to cover the costs of peer review, editing, and publication.
+        </p>
+
+        <div class="public-cards">
+
+            <!-- Standard -->
+            <div class="public-card" onclick="publicSelect(this)">
+                <h3>Standard Article</h3>
+                <p class="public-price">$1,200</p>
+                <span class="public-sub">Per accepted article</span>
+
+                <ul>
+                    <li><i class="fa-solid fa-circle-check"></i> Full peer review process</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Professional copyediting</li>
+                    <li><i class="fa-solid fa-circle-check"></i> XML and PDF production</li>
+                    <li><i class="fa-solid fa-circle-check"></i> DOI assignment</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Unlimited word count</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Open access publishing</li>
+                </ul>
+            </div>
+
+            <!-- Comprehensive -->
+            <div class="public-card public-active" onclick="publicSelect(this)">
+                <span class="public-badge">Recommended</span>
+
+                <h3>Comprehensive Package</h3>
+                <p class="public-price">$1,800</p>
+                <span class="public-sub">Enhanced publication</span>
+
+                <ul>
+                    <li><i class="fa-solid fa-circle-check"></i> All standard features</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Professional language editing</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Graphical abstract creation</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Priority processing</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Social media promotion</li>
+                    <li><i class="fa-solid fa-circle-check"></i> 5 print copies included</li>
+                </ul>
+
+                <button class="public-btn">Choose This Package</button>
+            </div>
+
+            <!-- Short -->
+            <div class="public-card" onclick="publicSelect(this)">
+                <h3>Short Communication</h3>
+                <p class="public-price">$800</p>
+                <span class="public-sub">Up to 3,000 words</span>
+
+                <ul>
+                    <li><i class="fa-solid fa-circle-check"></i> Expedited peer review</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Basic copyediting</li>
+                    <li><i class="fa-solid fa-circle-check"></i> PDF production</li>
+                    <li><i class="fa-solid fa-circle-check"></i> DOI assignment</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Open access publishing</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Faster publication timeline</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- section two srtar from here -->
+<section id="payment-section" class="payment-section">
+  <div class="waiver-cards">
+    
+    <div class="waiver-card green-card">
+      <div class="card-header">
+        <span class="card-icon green-icon">🌍</span>
+        <h3>Developing Country Waiver</h3>
+      </div>
+      <p>
+        We offer complete fee waivers for corresponding authors from low-income
+        countries and 50% discounts for lower-middle-income countries as classified
+        by the World Bank.
+      </p>
+      <button class="card-btn">Check Eligibility</button>
+    </div>
+
+    <div class="waiver-card blue-card">
+      <div class="card-header">
+        <span class="card-icon blue-icon">👤</span>
+        <h3>Financial Hardship Waiver</h3>
+      </div>
+      <p>
+        Authors experiencing financial difficulties may apply for a waiver or
+        discount. Applications are reviewed on a case-by-case basis by our
+        editorial team.
+      </p>
+      <button class="card-btn">Request Waiver</button>
+    </div>
+
+  </div>
+
+  <div class="payment-info">
+    <div class="info-box">
+      <h4>Payment Information</h4>
+
+      <div class="info-grid">
+        <div class="info-col">
+          <h5>When to Pay</h5>
+          <p>
+            Payment is only required after your manuscript has been accepted for
+            publication following peer review. You will receive an invoice with
+            payment instructions once your article is accepted.
+          </p>
+
+          <h5>Payment Methods</h5>
+          <ul class="payment-methods">
+            <li>Credit/Debit Card (Visa, Mastercard, Amex)</li>
+            <li>Bank Transfer / Wire Transfer</li>
+            <li>PayPal</li>
+            <li>Institutional Purchase Order</li>
+          </ul>
+        </div>
+
+        <div class="info-col">
+          <h5>What's Included</h5>
+          <ul class="included-list">
+            <li>Peer review management and coordination</li>
+            <li>Professional copyediting and typesetting</li>
+            <li>XML and PDF file production</li>
+            <li>DOI registration and metadata deposit</li>
+            <li>Hosting and permanent archiving</li>
+            <li>Submission to indexing databases</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div id="footer"></div>
+        <script src="./header.js"></script>
+        <script src="./footer.js"></script>
+<script src="./last.js"></script>
+</body>
+</html>

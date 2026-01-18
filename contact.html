@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link rel="stylesheet" href="./Tbar.css">
+</head>
+
+<body>
+    <div id="header"></div>
+    <main id="space">
+        <section class="contact-wrapper" style="padding-top:220px;">
+
+            <div class="contact-header">
+                <h2>Contact Us</h2>
+                <p>
+                    Have a question or need assistance? We're here to help.
+                    Reach out to us using any of the methods below.
+                </p>
+            </div>
+
+            <div class="contact-layout">
+
+                <!-- LEFT: FORM -->
+                <form class="contact-card" id="contactForm">
+
+                    <h3>Send Us a Message</h3>
+
+                    <div class="contact-row">
+                        <div class="contact-field">
+                            <label>First Name *</label>
+                            <input type="text" id="firstName" placeholder="John">
+                        </div>
+                        <div class="contact-field">
+                            <label>Last Name *</label>
+                            <input type="text" id="lastName" placeholder="Doe">
+                        </div>
+                    </div>
+
+                    <div class="contact-field">
+                        <label>Email Address *</label>
+                        <input type="email" id="email" placeholder="john.doe@university.edu">
+                    </div>
+
+                    <div class="contact-field">
+                        <label>Subject *</label>
+                        <input type="text" id="subject" placeholder="What is your inquiry about?">
+                    </div>
+
+                    <div class="contact-field">
+                        <label>Category *</label>
+                        <select id="category">
+                            <option value="">Select a category</option>
+                            <option>Editorial</option>
+                            <option>Submissions</option>
+                            <option>Technical Support</option>
+                            <option>Billing</option>
+                        </select>
+                    </div>
+
+                    <div class="contact-field">
+                        <label>Message *</label>
+                        <textarea id="message" placeholder="Please provide details about your inquiry..."></textarea>
+                    </div>
+
+                    <button type="submit" class="contact-btn">✈ Send Message</button>
+
+                    <small class="contact-note">
+                        * Required fields. We typically respond within 1–2 business days.
+                    </small>
+
+                </form>
+
+                <!-- RIGHT: INFO -->
+                <div class="contact-side">
+
+                    <div class="info-card">
+                        <h4>Contact Information</h4>
+                        <p>📧 info@nexusjournal.org</p>
+                        <p>📞 +1 (617) 555-0123</p>
+                        <p>📍 123 Research Avenue<br>Cambridge, MA 02139<br>United States</p>
+                        <p>🕒 Monday – Friday<br>9:00 AM – 5:00 PM EST</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h4>Specific Departments</h4>
+                        <p>Editorial Office<br><a href="#">editorial@nexusjournal.org</a></p>
+                        <p>Submissions<br><a href="#">submissions@nexusjournal.org</a></p>
+                        <p>Technical Support<br><a href="#">support@nexusjournal.org</a></p>
+                        <p>Billing & Payments<br><a href="#">billing@nexusjournal.org</a></p>
+                    </div>
+
+                    <div class="info-card emergency">
+                        <h4>Emergency Contact</h4>
+                        <p>
+                            For urgent editorial matters or time-sensitive issues,
+                            please call our emergency line:
+                        </p>
+                        <strong>+1 (617) 555-0199</strong>
+                        <small>Available 24/7 for emergencies</small>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+    </main>
+    <div id="footer"></div>
+
+    <!-- footer section -->
+
+
+    <script src="./app.js"></script>
+    <script src="./footer.js"></script>
+    <script src="./header.js"></script>
+</body>
+
+</html>

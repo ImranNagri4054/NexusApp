@@ -1,0 +1,111 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f4f6f8;
+}
+
+.reg-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.reg-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 520px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.reg-title {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.reg-subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.reg-row {
+    display: flex;
+    gap: 15px;
+}
+
+.reg-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.reg-field label {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.reg-field input {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.reg-field input:focus {
+    outline: none;
+    border-color: #333;
+}
+
+.reg-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.reg-btn {
+    width: 100%;
+    padding: 12px;
+    background: #0b0b1e;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    margin-top: 10px;
+}
+
+.reg-btn:hover {
+    background: #1a1a3a;
+}
+
+.reg-footer {
+    text-align: center;
+    font-size: 13px;
+    margin-top: 15px;
+}
+
+.reg-footer a {
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+    .reg-row {
+        flex-direction: column;
+    }
+}
