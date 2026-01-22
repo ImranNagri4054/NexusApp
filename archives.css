@@ -1,0 +1,194 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+#archives {
+  padding: 40px 16px;
+  background: #ffffff;
+}
+
+.archives-container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.archives-title {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.archives-description {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 28px;
+}
+
+.archives-year {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.archives-year-btn {
+  width: 100%;
+  background: #f9fafb;
+  border: none;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.archives-year-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.archives-chevron {
+  transition: transform 0.3s ease;
+}
+
+.archives-year.active .archives-chevron {
+  transform: rotate(180deg);
+}
+
+.archives-content {
+  display: none;
+  padding: 16px;
+  background: #ffffff;
+}
+
+.archives-year.active .archives-content {
+  display: block;
+}
+
+.archives-issue {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.archives-issue-info h4 {
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.archives-issue-info p {
+  font-size: 13px;
+  color: #666;
+}
+
+.archives-issue-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.archives-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  border-radius: 20px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (max-width: 640px) {
+  .archives-issue {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+/* Root Variables */
+:root {
+  --archives-bg: #f3f8ff;
+  --archives-border: #d7e4ff;
+  --archives-text: #1f2937;
+  --archives-btn-bg: #0f172a;
+  --archives-btn-text: #ffffff;
+}
+
+/* Section */
+#archives-search {
+  padding: 2rem 1rem;
+}
+
+/* Container */
+.archives-search-container {
+  max-width: 910px;
+  margin: 0 auto;
+  background: var(--archives-bg);
+  border: 1px solid var(--archives-border);
+  border-radius: 12px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+/* Content */
+.archives-search-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--archives-text);
+  margin-bottom: 0.5rem;
+}
+
+.archives-search-text {
+  font-size: 1rem;
+  color: #4b5563;
+  max-width: 600px;
+}
+
+/* Button */
+.archives-search-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--archives-btn-bg);
+  color: var(--archives-btn-text);
+  border: none;
+  padding: 0.75rem 1.4rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.archives-search-btn i {
+  font-size: 0.9rem;
+}
+
+.archives-search-btn:hover {
+  background: #020617;
+  transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .archives-search-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .archives-search-text {
+    max-width: 100%;
+  }
+}

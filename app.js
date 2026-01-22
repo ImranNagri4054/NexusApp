@@ -140,3 +140,9 @@ feeCards.forEach(card => {
         card.classList.add('fee-active');
     });
 });
+// JS for submittion page
+document
+    .getElementById("submit-start-btn")
+    .addEventListener("click", () => {
+        alert("Submission process started!");
+    });

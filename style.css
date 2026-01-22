@@ -1460,143 +1460,141 @@ body {
 #topNavigation {
 gap: 200px;
 }
-/* announ css from here */
-/* ===== Announcements Section ===== */
-.nx-announcements {
-    max-width: 900px;
-    margin: 80px auto;
-    font-family: Arial, sans-serif;
-    padding: 0 16px;
+
+/*  Style For Announcements Page  */
+/* Root Variables (if already defined, keep yours) */
+:root {
+    --anounc-primary: #1e3a8a;
+    --anounc-primary-light: #f1f5ff;
+    --anounc-border: #dbe4ff;
+    --anounc-text: #111827;
+    --anounc-text-muted: #6b7280;
 }
 
-.nx-title {
-    font-size: 28px;
-    color: #0a2e8a;
+/* Page Wrapper */
+#page-content {
+    padding: 40px 0;
+}
+
+/* Main Container */
+.anounc-container {
+    width: 80%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* Title */
+.anounc-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--anounc-primary);
     margin-bottom: 8px;
 }
 
-.nx-subtitle {
-    color: #555;
-    margin-bottom: 30px;
+/* Subtitle */
+.anounc-subtitle {
+    font-size: 14px;
+    color: var(--anounc-text-muted);
+    margin-bottom: 24px;
+    line-height: 1.6;
 }
 
-.nx-pinned-label {
-    font-weight: 600;
-    margin-bottom: 14px;
-}
-
-/* ===== Card ===== */
-.nx-announce-card {
-    border: 1px solid #c7dbff;
-    border-radius: 16px;
-    padding: 22px;
-    background: #ffffff;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Pinned State */
-.nx-announce-card.pinned {
-    background: #f1f7ff;
-    box-shadow: 0 8px 24px rgba(0, 70, 180, 0.12);
-}
-
-/* ===== Card Header ===== */
-.nx-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 14px;
-}
-
-.nx-badge {
-    background: #1558ff;
-    color: #fff;
-    font-size: 13px;
-    padding: 6px 14px;
-    border-radius: 20px;
-}
-
-/* ===== Date ===== */
-.nx-date-box {
+/* Pinned Label */
+.anounc-pinned-label {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #444;
-}
-
-.nx-calendar-icon {
-    cursor: pointer;
-}
-
-#nxDateInput {
-    border: none;
-    background: transparent;
     font-size: 14px;
-    cursor: pointer;
-}
-
-/* ===== Content ===== */
-.nx-card-title {
-    font-size: 20px;
-    margin-bottom: 12px;
-}
-
-.nx-card-text {
-    color: #444;
-    line-height: 1.6;
+    color: var(--anounc-primary);
     margin-bottom: 18px;
 }
 
-/* ===== Pin Button ===== */
-.nx-pin-btn {
-    border: none;
-    background: #0a2e8a;
-    color: #fff;
-    padding: 10px 18px;
-    border-radius: 24px;
-    cursor: pointer;
-    transition: background 0.2s ease;
+/* Card */
+.anounc-card {
+    background: var(--anounc-primary-light);
+    border: 1px solid var(--anounc-border);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 22px;
 }
-.nx-card-text {
-    font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
-    font-size: 15px;
-    font-weight: 400;
+
+/* Card Header */
+.anounc-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Badge left, date right */
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--anounc-text-muted);
+}
+
+.anounc-badge {
+    background: #e0e7ff;
+    color: var(--anounc-primary);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.anounc-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Card Title */
+.anounc-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--anounc-text);
+    margin-bottom: 10px;
+}
+
+/* Card Text */
+.anounc-card-text {
+    font-size: 14px;
     line-height: 1.6;
-    color: #444;
+    color: var(--anounc-text-muted);
+}
+.anounc-card-plain {
+    background: transparent;       /* No color */
+    border: 1px solid var(--anounc-border);  /* Keep border */
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 22px;
 }
 
-
-.nx-pin-btn:hover {
-    background: #08306f;
+/* Header for plain cards */
+.plain-header {
+    display: flex;
+    justify-content: space-between; /* Badge left, date right */
+    align-items: center;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--anounc-text-muted);
 }
 
-
-.nx-pin-btn:hover {
-    background: #08307a;
-}
-.nx-card.active,
-.nx-card.pinned {
-    background: #d1e7ff;
-}
-.nx-announce-card.nx-active {
-    background: #e6f0ff; /* light blue */
+/* Date for plain cards */
+.plain-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
+/* Responsive */
+@media (max-width: 768px) {
+    .anounc-container {
+        width: 100%;
+        padding: 0 16px;
+    }
 
-/* ===== Responsive ===== */
-@media (max-width: 600px) {
-    .nx-card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+    .anounc-card {
+        padding: 22px 20px;
     }
 }
 
 
-/* dropdown */
-
-
-/* NAV ITEM */
+                 /* NAV ITEM */
 .nav-item {
     position: relative;
     list-style: none;
@@ -1642,4 +1640,521 @@ gap: 200px;
 /* SHOW DROPDOWN ON HOVER (DESKTOP) */
 .dropdown:hover .dropdown-menu {
     display: block;
+}
+   /* STYKE FOR TAMPLATES PAGE */
+
+.tamp-container {
+    width: 80%;
+    max-width: 1100px;
+    margin: 40px auto;
+}
+
+.tamp-title {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.tamp-subtitle {
+    font-size: 15px;
+    color: #4b5563;
+    margin-bottom: 25px;
+}
+
+/* INFO BOX */
+.tamp-info-box {
+    background: #f1f7ff;
+    border: 1px solid #cfe0ff;
+    border-radius: 8px;
+    padding: 20px 25px;
+    margin-bottom: 30px;
+}
+
+.tamp-info-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.tamp-info-list {
+    padding-left: 20px;
+}
+
+.tamp-info-list li {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+/* SECTION */
+.tamp-section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* CARD */
+.tamp-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    padding: 22px;
+}
+
+.tamp-card-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.tamp-file-icon {
+    font-size: 32px;
+    color: #2563eb;
+    margin-top: 4px;
+}
+
+.tamp-card-content {
+    flex: 1;
+}
+
+.tamp-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.tamp-card-meta {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 14px;
+}
+
+.tamp-card-desc {
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 22px;
+}
+
+/* BUTTON — EXACT POSITION */
+.tamp-download-btn {
+    background: #111827;
+    color: #ffffff;
+    border: none;
+    padding: 9px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    margin-top: 4px;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.tamp-download-btn:hover {
+    background: #000000;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .tamp-container {
+        width: 90%;
+    }
+
+    .tamp-card-row {
+        flex-direction: column;
+        padding: 28px 26px;
+    }
+}
+/* Layout */
+.temp2-container {
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Card */
+.temp2-card {
+    border: 1px solid var(--temp2-border);
+    border-radius: 14px;
+    padding: 26px 30px;
+    background: #ffffff;
+}
+
+.temp2-card-muted {
+    background: var(--temp2-bg-light);
+    background-color: #F3F4F6;
+}
+
+/* Typography */
+.temp2-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--temp2-text-dark);
+    /* background-color: #FFFFFF; */
+    margin-bottom: 12px;
+}
+
+.temp2-card-text {
+    font-size: 14px;
+    color: var(--temp2-text-muted);
+    line-height: 1.6;
+    margin-bottom: 18px;
+}
+
+/* Buttons */
+.temp2-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.temp2-outline-btn {
+    background: #ffffff;
+    border: 1px solid var(--temp2-border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 14px;
+    color: var(--temp2-text-dark);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s ease;
+}
+
+.temp2-outline-btn:hover {
+    background: #f1f5f9;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .temp2-card {
+        padding: 22px;
+    }
+
+    .temp2-button-group {
+        gap: 10px;
+    }
+}
+    /* STYLE FOR INDEXATION PAGE */
+    /* indexation page CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Inter", Arial, sans-serif;
+    background: #ffffff;
+    color: #111827;
+}
+
+/* SECTION */
+.use-indexations-section {
+    padding: 80px 20px;
+}
+
+.use-indexations-container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* TITLE */
+.use-indexations-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.use-indexations-subtitle {
+    font-size: 15px;
+    color: #4b5563;
+    max-width: 900px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+/* STATS */
+.use-indexations-stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+}
+
+.use-indexations-badge {
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-weight: 500;
+}
+
+.use-indexations-badge.green {
+    background: #16a34a;
+    color: #ffffff;
+}
+
+.use-indexations-badge.blue {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.use-indexations-badge.gray {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+/* LABEL */
+.use-indexations-label {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* GRID */
+.use-indexations-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+/* CARD */
+.use-indexations-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 22px;
+    background: #ffffff;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.use-indexations-card:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    transform: translateY(-3px);
+}
+
+/* CARD HEADER */
+.use-indexations-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.use-indexations-card-header h4 {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* STATUS */
+.use-indexations-status {
+    font-size: 12px;
+    background: #16a34a;
+    color: #ffffff;
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+
+/* TEXT */
+.use-indexations-card-text {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+/* LINK */
+.use-indexations-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: #111827;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.use-indexations-link:hover {
+    text-decoration: underline;
+}
+
+/* RESPONSIVE */
+
+/* Tablet */
+@media (max-width: 900px) {
+    .use-indexations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .use-indexations-title {
+        font-size: 24px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .use-indexations-section {
+        padding: 60px 16px;
+    }
+
+    .use-indexations-stats {
+        gap: 8px;
+    }
+
+    .use-indexations-badge {
+        font-size: 12px;
+    }
+}
+
+/* indexation page CSS 2nd section */
+/* SECONDARY GRID (3 COLUMN) */
+.use-indexations-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* TAG */
+.use-indexations-tag {
+    display: inline-block;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #f3f4f6;
+    color: #374151;
+    margin-bottom: 10px;
+}
+
+/* CARD TITLE */
+.use-indexations-card-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+/* CHECK ICON */
+.use-indexations-check {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 20px;
+    height: 20px;
+    background: #16a34a;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* POSITION FIX */
+.use-indexations-card {
+    position: relative;
+}
+
+/* RESPONSIVE */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .use-indexations-grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .use-indexations-grid-3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* indexation page CSS 3rd section */
+/* =========================
+   METRICS SECTION
+========================= */
+
+.use-indexations-metrics-section {
+    padding: 40px;
+}
+
+.use-indexations-box {
+    background: #f1f7ff;
+    border: 1px solid #cfe0ff;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.use-indexations-box-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 16px;
+}
+
+/* METRICS GRID */
+.use-indexations-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+/* METRIC CARD */
+.use-indexations-metric-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+}
+
+.use-indexations-metric-value {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1d4ed8;
+    margin-bottom: 6px;
+}
+
+.use-indexations-metric-label {
+    font-size: 13px;
+    color: #475569;
+}
+
+/* APPLICATION TEXT */
+.use-indexations-application-text {
+    font-size: 14px;
+    color: #334155;
+    line-height: 1.6;
+}
+
+.use-indexations-email-link {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.use-indexations-email-link:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .use-indexations-metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .use-indexations-metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .use-indexations-box {
+        padding: 18px;
+    }
 }

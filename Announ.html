@@ -1,52 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="./style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Announcements</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+
     <div id="header"></div>
+
     <main id="page-content">
-    <section class="nx-announcements">
+        <div class="anounc-container" style="padding-top: 190px;">
 
-    <h2 class="nx-title">Announcements</h2>
-    <p class="ubtitlenx-s">
-        Stay updated with the latest news, calls for papers, and important updates from The Nexus Journal.
-    </p>
+            <h1 class="anounc-title">Announcements</h1>
 
-    <div class="nx-pinned-label">
-        📌 Pinned Announcements
-    </div>
+            <p class="anounc-subtitle">
+                Stay updated with the latest news, calls for papers, and important updates from The Nexus Journal.
+            </p>
 
-    <div class="nx-announce-card" id="nxCard">
-
-        <div class="nx-card-header">
-            <span class="nx-badge">Call for Papers</span>
-
-            <div class="nx-date-box">
-                <i class="fa-regular fa-calendar nx-calendar-icon"></i>
-                <input type="date" id="nxDateInput">
+            <!-- Pinned Label -->
+            <div class="anounc-pinned-label">
+                <i class="fa-solid fa-thumbtack"></i>
+                <span>Pinned Announcements</span>
             </div>
+
+            <!-- Announcement Card 1 -->
+            <div class="anounc-card anounc-card-pinned">
+                <div class="anounc-card-header">
+                    <span class="anounc-badge">Call for Papers</span>
+                    <span class="anounc-date">
+                        <i class="fa-regular fa-calendar"></i>
+                        October 25, 2025
+                    </span>
+                </div>
+
+                <h3 class="anounc-card-title">
+                    Call for Papers: Special Issue on Artificial Intelligence in Healthcare
+                </h3>
+
+                <p class="anounc-card-text">
+                    We are pleased to announce a special issue focused on the applications of artificial intelligence in
+                    healthcare.
+                    We invite original research articles, review papers, and case studies.
+                    Submission deadline: December 31, 2025.
+                </p>
+            </div>
+
+            <!-- Announcement Card 2 -->
+            <div class="anounc-card anounc-card-pinned">
+                <div class="anounc-card-header">
+                    <span class="anounc-badge">Guidelines</span>
+                    <span class="anounc-date">
+                        <i class="fa-regular fa-calendar"></i>
+                        October 20, 2025
+                    </span>
+                </div>
+
+                <h3 class="anounc-card-title">
+                    Updated Author Guidelines Now Available
+                </h3>
+
+                <p class="anounc-card-text">
+                    We have updated our author guidelines to include new formatting requirements and citation styles.
+                    Please review the updated guidelines before submitting your manuscript.
+                </p>
+            </div>
+
         </div>
+        <div class="anounc-container">
 
-        <h3 class="nx-card-title">
-            Call for Papers: Special Issue on Artificial Intelligence in Healthcare
-        </h3>
+            <h2 class="anounc-title">All Announcements</h2>
 
-        <p class="nx-card-text">
-            We are pleased to announce a special issue focused on the applications of artificial intelligence
-            in healthcare. We invite original research articles, review papers, and case studies.
-            Submission deadline: December 31, 2025.
-        </p>
-    </div>
+            <!-- Announcement Card 1 -->
+            <div class="anounc-card anounc-card-plain">
+                <div class="anounc-card-header plain-header">
+                    <span class="anounc-badge">Update</span>
+                    <span class="anounc-date plain-date">
+                        <i class="fa-regular fa-calendar"></i>
+                        January 20, 2026
+                    </span>
+                </div>
 
-</section>
-</main>
-<div id="footer"></div>
+                <h3 class="anounc-card-title">
+                    Website Maintenance Scheduled
+                </h3>
+
+                <p class="anounc-card-text">
+                    Our website will undergo maintenance from 10:00 PM to 12:00 AM. Some features may be temporarily
+                    unavailable.
+                </p>
+            </div>
+
+            <!-- Announcement Card 2 -->
+            <div class="anounc-card anounc-card-plain">
+                <div class="anounc-card-header plain-header">
+                    <span class="anounc-badge">Notice</span>
+                    <span class="anounc-date plain-date">
+                        <i class="fa-regular fa-calendar"></i>
+                        January 18, 2026
+                    </span>
+                </div>
+
+                <h3 class="anounc-card-title">
+                    New Submission Guidelines Released
+                </h3>
+
+                <p class="anounc-card-text">
+                    Please review the updated submission guidelines before submitting your papers. The changes ensure
+                    consistency and clarity.
+                </p>
+            </div>
+            <!-- Announcement Card 3 -->
+            <div class="anounc-card anounc-card-plain">
+                <div class="anounc-card-header plain-header">
+                    <span class="anounc-badge">Notice</span>
+                    <span class="anounc-date plain-date">
+                        <i class="fa-regular fa-calendar"></i>
+                        January 18, 2026
+                    </span>
+                </div>
+
+                <h3 class="anounc-card-title">
+                    New Submission Guidelines Released
+                </h3>
+
+                <p class="anounc-card-text">
+                    Please review the updated submission guidelines before submitting your papers. The changes ensure
+                    consistency and clarity.
+                </p>
+            </div>
+            <!-- Announcement Card 4 -->
+            <div class="anounc-card anounc-card-plain">
+                <div class="anounc-card-header plain-header">
+                    <span class="anounc-badge">Notice</span>
+                    <span class="anounc-date plain-date">
+                        <i class="fa-regular fa-calendar"></i>
+                        January 18, 2026
+                    </span>
+                </div>
+
+                <h3 class="anounc-card-title">
+                    New Submission Guidelines Released
+                </h3>
+
+                <p class="anounc-card-text">
+                    Please review the updated submission guidelines before submitting your papers. The changes ensure
+                    consistency and clarity.
+                </p>
+            </div>
+            <!-- Announcement Card 5 -->
+            <div class="anounc-card anounc-card-plain">
+                <div class="anounc-card-header plain-header">
+                    <span class="anounc-badge">Notice</span>
+                    <span class="anounc-date plain-date">
+                        <i class="fa-regular fa-calendar"></i>
+                        January 18, 2026
+                    </span>
+                </div>
+
+                <h3 class="anounc-card-title">
+                    New Submission Guidelines Released
+                </h3>
+
+                <p class="anounc-card-text">
+                    Please review the updated submission guidelines before submitting your papers. The changes ensure
+                    consistency and clarity.
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="footer"></div>
+
     <script src="./header.js"></script>
     <script src="./footer.js"></script>
-<script src="./app.js"></script>
+    <script src="./app.js"></script>
+
 </body>
+
 </html>
