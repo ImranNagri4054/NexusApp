@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Article Details - The Nexus</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="header"></div>
+
+    <main id="page-content" style="padding: 210px 20px 40px">
+      <section class="submit-prep-container" id="journal-detail-container">
+        <div
+          style="
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            margin-top: 4rem;
+          "
+        >
+          <button
+            id="journal-back-btn"
+            class="submit-start-btn"
+            style="max-width: 160px; padding: 0.5rem 1rem"
+          >
+            ← Back
+          </button>
+          <button
+            id="journal-edit-btn"
+            class="submit-start-btn"
+            style="max-width: 160px; display: none; padding: 0.5rem 1rem"
+          >
+            Edit Article
+          </button>
+        </div>
+
+        <article class="submit-prep-card">
+          <h1
+            id="jd-title"
+            class="fr-title"
+            style="text-align: left; margin-bottom: 8px"
+          >
+            Loading...
+          </h1>
+          <p
+            id="jd-authors"
+            class="submit-subtitle"
+            style="margin-bottom: 4px"
+          ></p>
+          <p
+            id="jd-meta"
+            class="submit-subtitle"
+            style="margin-bottom: 24px"
+          ></p>
+
+          <section>
+            <h2 class="submit-prep-title">Abstract</h2>
+            <p id="jd-abstract" class="submit-subtitle"></p>
+          </section>
+
+          <section>
+            <h2 class="submit-prep-title">Introduction</h2>
+            <p id="jd-introduction" class="submit-subtitle"></p>
+          </section>
+
+          <section>
+            <h2 class="submit-prep-title">Methods</h2>
+            <p id="jd-methods" class="submit-subtitle"></p>
+          </section>
+
+          <section>
+            <h2 class="submit-prep-title">Results</h2>
+            <p id="jd-results" class="submit-subtitle"></p>
+          </section>
+
+          <section>
+            <h2 class="submit-prep-title">Discussion</h2>
+            <p id="jd-discussion" class="submit-subtitle"></p>
+          </section>
+
+          <section>
+            <h2 class="submit-prep-title">References</h2>
+            <p id="jd-references" class="submit-subtitle"></p>
+          </section>
+
+          <section id="jd-extra-sections"></section>
+        </article>
+
+        <p id="jd-message" class="submit-subtitle" style="margin-top: 12px"></p>
+      </section>
+    </main>
+
+    <div id="footer"></div>
+
+    <script src="./app.js"></script>
+    <script src="./footer.js"></script>
+    <script src="./header.js"></script>
+    <script>
+      (function () {
+        var backBtn = document.getElementById("journal-back-btn");
+        var editBtn = document.getElementById("journal-edit-btn");
+        if (backBtn) {
+          backBtn.addEventListener("click", function () {
+            if (history.length > 1) {
+              history.back();
+            } else {
+              window.location.href = "/";
+            }
+          });
+        }
+
+        var params = new URLSearchParams(window.location.search);
+        var id = params.get("id");
+        var msg = document.getElementById("jd-message");
+
+        if (!id) {
+          if (msg) msg.textContent = "No article specified.";
+          return;
+        }
+
+        fetch("/api/journals/" + encodeURIComponent(id))
+          .then(function (res) {
+            if (!res.ok) throw new Error("Not found");
+            return res.json();
+          })
+          .then(function (j) {
+            document.getElementById("jd-title").textContent =
+              j.title || "Untitled article";
+
+            var authorsEl = document.getElementById("jd-authors");
+            if (authorsEl && j.authors && j.authors.length) {
+              authorsEl.textContent = "Authors: " + j.authors.join(", ");
+            }
+
+            var meta = "";
+            if (j.createdAt) {
+              var d = new Date(j.createdAt);
+              meta += "Published on " + d.toLocaleDateString();
+            }
+            document.getElementById("jd-meta").textContent = meta;
+
+            function setRich(id, value) {
+              var el = document.getElementById(id);
+              if (!el) return;
+              var text = value || "";
+              var safe = text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+              el.innerHTML = safe.replace(/\n/g, "<br>");
+            }
+
+            setRich("jd-abstract", j.abstract);
+            setRich("jd-introduction", j.introduction);
+            setRich("jd-methods", j.methods);
+            setRich("jd-results", j.results);
+            setRich("jd-discussion", j.discussion);
+            setRich("jd-references", j.references);
+
+            var extraContainer = document.getElementById("jd-extra-sections");
+            extraContainer.innerHTML = "";
+            if (j.extraSections) {
+              Object.keys(j.extraSections).forEach(function (key) {
+                var val = j.extraSections[key];
+                if (!val) return;
+                var sec = document.createElement("section");
+                var h = document.createElement("h2");
+                h.className = "submit-prep-title";
+                h.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+                var p = document.createElement("p");
+                p.className = "submit-subtitle";
+                p.textContent = val;
+                sec.appendChild(h);
+                sec.appendChild(p);
+                extraContainer.appendChild(sec);
+              });
+            }
+
+            // Show Edit button only for author
+            if (editBtn && j.author) {
+              fetch("/api/auth/me", { credentials: "include" })
+                .then(function (res) {
+                  if (!res.ok) throw new Error("not auth");
+                  return res.json();
+                })
+                .then(function (me) {
+                  if (
+                    me &&
+                    me.user &&
+                    String(me.user.id) === String(j.author)
+                  ) {
+                    editBtn.style.display = "inline-block";
+                    editBtn.onclick = function () {
+                      window.location.href =
+                        "/submit-form.html?id=" + encodeURIComponent(j._id);
+                    };
+                  }
+                })
+                .catch(function () {
+                  /* ignore */
+                });
+            }
+          })
+          .catch(function () {
+            if (msg) msg.textContent = "Unable to load this article.";
+          });
+      })();
+    </script>
+  </body>
+</html>

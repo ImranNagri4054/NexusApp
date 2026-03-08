@@ -57,6 +57,57 @@
         </div>
 
     </section>
+
+    <!-- Simple online submission form powered by backend API -->
+    <section class="submit-prep-container" id="submission-form-section">
+        <h3 class="submit-prep-title">Online Submission Form</h3>
+
+        <form id="journal-form" class="journal-form">
+            <div class="submit-prep-card">
+                <h4 class="submit-prep-card-title submit-prep-simple-title">Article Details</h4>
+
+                <div class="submit-prep-columns">
+                    <div class="submit-prep-column">
+                        <label>Title *</label>
+                        <input type="text" id="jf-title" required>
+
+                        <label>Keywords (optional)</label>
+                        <input type="text" id="jf-keywords" placeholder="e.g. climate change, machine learning">
+
+                        <label>Abstract *</label>
+                        <textarea id="jf-abstract" rows="4" required></textarea>
+                    </div>
+
+                    <div class="submit-prep-column">
+                        <label>Introduction *</label>
+                        <textarea id="jf-introduction" rows="4" required></textarea>
+
+                        <label>Methods *</label>
+                        <textarea id="jf-methods" rows="4" required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit-prep-card">
+                <h4 class="submit-prep-card-title submit-prep-simple-title">Results & Discussion</h4>
+
+                <label>Results *</label>
+                <textarea id="jf-results" rows="4" required></textarea>
+
+                <label>Discussion *</label>
+                <textarea id="jf-discussion" rows="4" required></textarea>
+
+                <label>References *</label>
+                <textarea id="jf-references" rows="4" required></textarea>
+            </div>
+
+            <button type="submit" class="submit-start-btn">
+                Submit Manuscript
+            </button>
+
+            <p id="journal-form-message" class="submit-subtitle"></p>
+        </form>
+    </section>
     <!-- Manuscript Preparation Section -->
     <section class="submit-prep-container">
 
@@ -212,7 +263,7 @@
                         You will need to create an account if you haven't already.
                     </p>
 
-                    <a href="#" class="submit-process-btn">Access Submission Portal</a>
+                    <a href="#submission-form-section" class="submit-process-btn">Access Submission Portal</a>
                 </div>
             </div>
 
@@ -259,7 +310,145 @@
     <script src="./app.js"></script>
     <script src="./footer.js"></script>
     <script src="./header.js"></script>
-    <script src="app.js"></script>
+    <script>
+        (function () {
+            const formSection = document.getElementById('submission-form-section');
+            const startBtn = document.getElementById('submit-start-btn');
+            if (startBtn && formSection) {
+                startBtn.addEventListener('click', function () {
+                    formSection.scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+
+            const form = document.getElementById('journal-form');
+            const messageEl = document.getElementById('journal-form-message');
+            if (!form) return;
+
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                if (messageEl) messageEl.textContent = '';
+
+                const title = document.getElementById('jf-title').value.trim();
+                const keywords = document.getElementById('jf-keywords').value.trim();
+                const abstract = document.getElementById('jf-abstract').value.trim();
+                const introduction = document.getElementById('jf-introduction').value.trim();
+                const methods = document.getElementById('jf-methods').value.trim();
+                const results = document.getElementById('jf-results').value.trim();
+                const discussion = document.getElementById('jf-discussion').value.trim();
+                const references = document.getElementById('jf-references').value.trim();
+
+                if (!title || !abstract || !introduction || !methods || !results || !discussion || !references) {
+                    alert('Please fill in all required sections.');
+                    return;
+                }
+
+                const body = {
+                    title,
+                    abstract,
+                    introduction,
+                    methods,
+                    results,
+                    discussion,
+                    references,
+                    extraSections: {}
+                };
+
+                if (keywords) {
+                    body.extraSections.keywords = keywords;
+                }
+
+                try {
+                    const res = await fetch('/api/journals', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(body)
+                    });
+
+                    const data = await res.json().catch(() => ({}));
+
+                    if (res.status === 401) {
+                        if (messageEl) {
+                            messageEl.textContent = 'You must be logged in to submit a manuscript. Please sign in first.';
+                        } else {
+                            alert('You must be logged in to submit a manuscript.');
+                        }
+                        return;
+                    }
+
+                    if (!res.ok) {
+                        const msg = data.message || 'Submission failed.';
+                        if (messageEl) {
+                            messageEl.textContent = msg;
+                        } else {
+                            alert(msg);
+                        }
+                        return;
+                    }
+
+                    if (messageEl) {
+                        messageEl.textContent = 'Manuscript submitted successfully.';
+                    } else {
+                        alert('Manuscript submitted successfully.');
+                    }
+
+                    form.reset();
+                    loadMySubmissions();
+                } catch (err) {
+                    console.error(err);
+                    if (messageEl) {
+                        messageEl.textContent = 'Network error while submitting manuscript.';
+                    } else {
+                        alert('Network error while submitting manuscript.');
+                    }
+                }
+            });
+
+            async function loadMySubmissions() {
+                const listContainerId = 'my-submissions-list';
+                let container = document.getElementById(listContainerId);
+                if (!container) {
+                    container = document.createElement('section');
+                    container.id = listContainerId;
+                    container.className = 'submit-prep-container';
+                    container.innerHTML = '<h3 class="submit-prep-title">My Submissions</h3><div class="submit-prep-card"><ul class="submit-prep-list" id="my-submissions-ul"></ul></div>';
+                    document.body.appendChild(container);
+                }
+                const ul = document.getElementById('my-submissions-ul');
+                if (!ul) return;
+
+                ul.innerHTML = '<li>Loading...</li>';
+
+                try {
+                    const res = await fetch('/api/journals/mine', {
+                        credentials: 'include'
+                    });
+                    if (res.status === 401) {
+                        ul.innerHTML = '<li>Please log in to see your submissions.</li>';
+                        return;
+                    }
+                    const data = await res.json().catch(() => []);
+                    if (!Array.isArray(data) || data.length === 0) {
+                        ul.innerHTML = '<li>No submissions yet.</li>';
+                        return;
+                    }
+                    ul.innerHTML = '';
+                    data.forEach(j => {
+                        const li = document.createElement('li');
+                        const created = j.createdAt ? new Date(j.createdAt).toLocaleString() : '';
+                        li.textContent = j.title + (created ? ' (' + created + ')' : '');
+                        ul.appendChild(li);
+                    });
+                } catch (err) {
+                    console.error(err);
+                    ul.innerHTML = '<li>Unable to load submissions.</li>';
+                }
+            }
+
+            // Try to load submissions on page load (if user is logged in)
+            loadMySubmissions();
+        })();
+    </script>
 </body>
 
 </html>

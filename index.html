@@ -34,7 +34,7 @@
 
                 <div class="actionRow">
                     <button class="darkActionBtn">Browse Latest Issues →</button>
-                    <button class="lightActionBtn">Submit Your Research</button>
+                    <button class="lightActionBtn" id="hero-submit-btn">Submit Your Research</button>
                 </div>
 
                 <div class="metricsRow">
@@ -64,111 +64,13 @@
     <section class="fr-section">
         <h2 class="fr-title">Featured Research</h2>
         <p class="fr-subtitle">Explore our latest peer-reviewed articles spanning multiple disciplines and pushing the
-            boundaries of human knowledge..</p>
+            boundaries of human knowledge.</p>
 
-
-        <div class="fr-grid">
-            <!-- Card 1 -->
-            <article class="fr-card">
-                <figure class="fr-image">
-                    <img src="https://picsum.photos/600/400?random=1" alt="">
-                </figure>
-
-                <div class="fr-body">
-                    <span class="fr-tag">Environmental Science</span>
-                    <h3 class="fr-heading">
-                        Sustainable Urban Development: A Comparative Study of Smart Cities
-                    </h3>
-
-                    <p class="fr-text">
-                        This research examines sustainable practices in urban planning across five continents, offering
-                        insights for future city development.
-                    </p>
-
-                    <div class="fr-meta">
-                        <span>👤 Prof. Maria Santos, Dr. Ahmed Hassan</span>
-                        <span>📅 October 5, 2025</span>
-                    </div>
-
-                    <a href="#" class="fr-link">Read Full Article ↗</a>
-                </div>
-            </article>
-
-            <!-- Card 2 -->
-            <article class="fr-card">
-                <figure class="fr-image">
-                    <img src="https://picsum.photos/600/400?random=2" alt="">
-                </figure>
-
-                <div class="fr-body">
-                    <span class="fr-tag">Computer Science</span>
-                    <h3 class="fr-heading">
-                        Machine Learning Applications in Climate Change Prediction
-                    </h3>
-
-                    <p class="fr-text">
-                        This study explores novel machine learning algorithms for predicting long-term climate patterns.
-                    </p>
-
-                    <div class="fr-meta">
-                        <span>👤 Dr. Sarah Johnson</span>
-                        <span>📅 October 15, 2025</span>
-                    </div>
-
-                    <a href="#" class="fr-link">Read Full Article ↗</a>
-                </div>
-            </article>
-
-            <!-- Card 3 -->
-            <article class="fr-card">
-                <figure class="fr-image">
-                    <img src="https://picsum.photos/600/400?random=3" alt="">
-                </figure>
-
-                <div class="fr-body">
-                    <span class="fr-tag">Physics</span>
-                    <h3 class="fr-heading">
-                        Quantum Computing and Cryptographic Security
-                    </h3>
-
-                    <p class="fr-text">
-                        An in-depth analysis of quantum cryptographic systems and future security protocols.
-                    </p>
-
-                    <div class="fr-meta">
-                        <span>👤 Dr. Emily Rodriguez</span>
-                        <span>📅 October 10, 2025</span>
-                    </div>
-
-                    <a href="#" class="fr-link">Read Full Article ↗</a>
-                </div>
-            </article>
-
-            <!-- Hidden Cards -->
-            <article class="fr-card fr-hidden">
-                <figure class="fr-image">
-                    <img src="https://picsum.photos/600/400?random=4" alt="">
-                </figure>
-
-                <div class="fr-body">
-                    <span class="fr-tag">Data Science</span>
-                    <h3 class="fr-heading">Big Data Analytics in Healthcare</h3>
-
-                    <p class="fr-text">
-                        Leveraging big data to improve patient outcomes and operational efficiency.
-                    </p>
-
-                    <div class="fr-meta">
-                        <span>👤 Dr. James Lee</span>
-                        <span>📅 September 22, 2025</span>
-                    </div>
-
-                    <a href="#" class="fr-link">Read Full Article ↗</a>
-                </div>
-            </article>
+        <div class="fr-grid" id="featured-journals-grid">
+            <!-- Dynamic journal cards will be injected here -->
         </div>
 
-        <button id="fr-toggle-btn">View All Articles</button>
+        <button id="fr-toggle-btn" style="display:none;">View All Articles</button>
     </section>
 
     </section>
@@ -380,7 +282,7 @@
           Questions? Email us at
           <a href="mailto:submissions@nexusjournal.org">submissions@nexusjournal.org</a>
         </p> -->
-        <button class="submit-btn">
+        <button class="submit-btn" id="home-start-submission-btn">
             start submission
         </button>
         <button class="submit-btn">
@@ -402,6 +304,118 @@
 <!-- footer section -->
     <script src="./footer.js"></script>
     <script src="./header.js"></script>
+    <script>
+        (function () {
+            function handleProtectedNavigation(targetPath) {
+                fetch('/api/auth/me', { credentials: 'include' })
+                    .then(function (res) {
+                        if (!res.ok) {
+                            throw new Error('Not authenticated');
+                        }
+                        return res.json();
+                    })
+                    .then(function () {
+                        window.location.href = targetPath;
+                    })
+                    .catch(function () {
+                        // Not logged in: send to login first
+                        window.location.href = '/login.html';
+                    });
+            }
+
+            var heroBtn = document.getElementById('hero-submit-btn');
+            if (heroBtn) {
+                heroBtn.addEventListener('click', function () {
+                    handleProtectedNavigation('/submit-form.html');
+                });
+            }
+
+            var startBtn = document.getElementById('home-start-submission-btn');
+            if (startBtn) {
+                startBtn.addEventListener('click', function () {
+                    handleProtectedNavigation('/submit-form.html');
+                });
+            }
+
+            // Load dynamic Featured Research from journals API
+            var grid = document.getElementById('featured-journals-grid');
+            if (grid) {
+                fetch('/api/journals')
+                    .then(function (res) { return res.json(); })
+                    .then(function (items) {
+                        if (!Array.isArray(items) || items.length === 0) {
+                            grid.innerHTML = '<p>No articles have been published yet. Be the first to submit!</p>';
+                            return;
+                        }
+
+                        grid.innerHTML = '';
+
+                        items.forEach(function (j) {
+                            var article = document.createElement('article');
+                            article.className = 'fr-card';
+
+                            // Simple placeholder image
+                            var figure = document.createElement('figure');
+                            figure.className = 'fr-image';
+                            var img = document.createElement('img');
+                            img.src = j.imagePath || ('https://picsum.photos/600/400?random=' + Math.floor(Math.random() * 1000));
+                            img.alt = j.title || 'Journal article';
+                            figure.appendChild(img);
+
+                            var body = document.createElement('div');
+                            body.className = 'fr-body';
+
+                            var tag = document.createElement('span');
+                            tag.className = 'fr-tag';
+                            tag.textContent = 'Research Article';
+
+                            var heading = document.createElement('h3');
+                            heading.className = 'fr-heading';
+                            heading.textContent = j.title || 'Untitled article';
+
+                            var text = document.createElement('p');
+                            text.className = 'fr-text';
+                            text.textContent = (j.abstract && j.abstract.substring(0, 220) + (j.abstract.length > 220 ? '…' : '')) || 'No abstract provided.';
+
+                            var meta = document.createElement('div');
+                            meta.className = 'fr-meta';
+                            if (j.authors && j.authors.length) {
+                                var authSpan = document.createElement('span');
+                                authSpan.textContent = '👤 ' + j.authors.join(', ');
+                                meta.appendChild(authSpan);
+                            }
+                            var dateSpan = document.createElement('span');
+                            if (j.createdAt) {
+                                var d = new Date(j.createdAt);
+                                dateSpan.textContent = '📅 ' + d.toLocaleDateString();
+                            } else {
+                                dateSpan.textContent = '';
+                            }
+                            meta.appendChild(dateSpan);
+
+                            var link = document.createElement('a');
+                            link.href = '/journal.html?id=' + encodeURIComponent(j._id);
+                            link.className = 'fr-link';
+                            link.textContent = 'Read Full Article ↗';
+
+                            body.appendChild(tag);
+                            body.appendChild(heading);
+                            body.appendChild(text);
+                            body.appendChild(meta);
+                            body.appendChild(link);
+
+                            article.appendChild(figure);
+                            article.appendChild(body);
+
+                            grid.appendChild(article);
+                        });
+                    })
+                    .catch(function () {
+                        grid.innerHTML = '<p>Unable to load featured research at the moment.</p>';
+                    });
+            }
+        })();
+    </script>
 </body>
 </main>
 </html>

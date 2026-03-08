@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Details - The Nexus</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div id="header"></div>
+    <main id="page-content">
+        <!-- Issue header -->
+        <section id="current-section" class="current-section">
+            <div class="current-container">
+
+                <header class="current-header">
+                    <h2 class="current-title" id="issue-title">Issue Details</h2>
+                    <p class="current-subtitle" id="issue-subtitle">
+                        Loading issue information...
+                    </p>
+                </header>
+
+                <div class="current-card" id="issue-card">
+
+                    <div class="current-volume-box">
+                        <h3 class="current-vol" id="issue-vol">Vol. –</h3>
+                        <p class="current-issue" id="issue-number-label">Issue –</p>
+                        <span class="current-date" id="issue-date-label">–</span>
+                    </div>
+
+                    <div class="current-content">
+                        <h3 class="current-journal-title" id="issue-journal-title">
+                            The Nexus Journal of Research and Innovation
+                        </h3>
+
+                        <p class="current-description" id="issue-description">
+                        </p>
+
+                        <div class="current-actions">
+                            <button class="current-btn primary" id="issue-pdf-btn" style="display:none;">
+                                ⬇ Download Complete Issue (PDF)
+                            </button>
+                            <button class="current-btn secondary" id="issue-back-btn">
+                                ← Back to Issues
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Articles in this issue -->
+        <section id="comCard-section">
+            <div id="issue-articles"></div>
+        </section>
+    </main>
+
+    <div id="footer"></div>
+    <script src="./header.js"></script>
+    <script src="./footer.js"></script>
+    <script>
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            var id = params.get('id');
+
+            var titleEl = document.getElementById('issue-title');
+            var subtitleEl = document.getElementById('issue-subtitle');
+            var volEl = document.getElementById('issue-vol');
+            var issueEl = document.getElementById('issue-number-label');
+            var dateEl = document.getElementById('issue-date-label');
+            var journalTitleEl = document.getElementById('issue-journal-title');
+            var descEl = document.getElementById('issue-description');
+            var pdfBtn = document.getElementById('issue-pdf-btn');
+            var backBtn = document.getElementById('issue-back-btn');
+            var articlesContainer = document.getElementById('issue-articles');
+
+            if (backBtn) {
+                backBtn.addEventListener('click', function () {
+                    if (history.length > 1) {
+                        history.back();
+                    } else {
+                        window.location.href = '/current.html';
+                    }
+                });
+            }
+
+            if (!id) {
+                if (subtitleEl) subtitleEl.textContent = 'No issue specified.';
+                if (articlesContainer) {
+                    articlesContainer.innerHTML = '<p style="text-align:center;font-size:1.1rem;color:#64748b;">No issue ID provided.</p>';
+                }
+                return;
+            }
+
+            // Load issue meta
+            fetch('/api/issues/' + encodeURIComponent(id))
+                .then(function (res) {
+                    if (!res.ok) throw new Error('not found');
+                    return res.json();
+                })
+                .then(function (issue) {
+                    if (volEl) volEl.textContent = 'Vol. ' + issue.volume;
+                    if (issueEl) issueEl.textContent = 'Issue ' + issue.issueNumber;
+                    if (dateEl) dateEl.textContent = (issue.month || '') + ' ' + (issue.year || '');
+                    if (titleEl) titleEl.textContent = 'Issue ' + issue.issueNumber + ' – Vol. ' + issue.volume;
+                    if (subtitleEl) subtitleEl.textContent = 'Articles published in ' + (issue.month || '') + ' ' + (issue.year || '');
+                    if (journalTitleEl && issue.journalTitle) journalTitleEl.textContent = issue.journalTitle;
+                    if (descEl && issue.description) descEl.textContent = issue.description;
+                    if (pdfBtn && issue.pdfUrl) {
+                        pdfBtn.style.display = 'inline-block';
+                        pdfBtn.addEventListener('click', function () {
+                            window.open(issue.pdfUrl, '_blank');
+                        });
+                    }
+
+                    // Now load articles (journals) for this issue
+                    if (!articlesContainer) return;
+                    loadArticlesForIssue(issue._id);
+                })
+                .catch(function () {
+                    if (subtitleEl) subtitleEl.textContent = 'Issue not found.';
+                    if (articlesContainer) {
+                        articlesContainer.innerHTML = '<p style="text-align:center;font-size:1.1rem;color:#64748b;">Unable to load issue details.</p>';
+                    }
+                });
+
+            function loadArticlesForIssue(issueId) {
+                articlesContainer.innerHTML = '<p>Loading articles...</p>';
+                fetch('/api/issues/' + encodeURIComponent(issueId) + '/journals')
+                    .then(function (res) { return res.json(); })
+                    .then(function (journals) {
+                        if (!Array.isArray(journals) || journals.length === 0) {
+                            articlesContainer.innerHTML = '<p style="text-align:center;font-size:1.1rem;color:#64748b;">No articles assigned to this issue yet.</p>';
+                            return;
+                        }
+
+                        articlesContainer.innerHTML = '';
+
+                        journals.forEach(function (j) {
+                            var card = document.createElement('div');
+                            card.className = 'comCard';
+
+                            var header = document.createElement('div');
+                            header.className = 'comCard-header';
+
+                            var tag = document.createElement('span');
+                            tag.className = 'comCard-tag';
+                            tag.textContent = j.keywords || 'Research Article';
+
+                            var pages = document.createElement('span');
+                            pages.className = 'comCard-pages';
+                            pages.textContent = '';
+
+                            header.appendChild(tag);
+                            header.appendChild(pages);
+
+                            var title = document.createElement('h2');
+                            title.className = 'comCard-title';
+                            title.textContent = j.title || 'Untitled article';
+
+                            var authors = document.createElement('div');
+                            authors.className = 'comCard-authors';
+                            var authorText = 'Author';
+                            if (j.authors && j.authors.length) {
+                                authorText = j.authors.join(', ');
+                            }
+                            authors.innerHTML = '<span class="comCard-icon">👤</span><span>' + authorText + '</span>';
+
+                            var desc = document.createElement('p');
+                            desc.className = 'comCard-desc';
+                            var abs = j.abstract || '';
+                            desc.textContent = abs.length > 250 ? abs.substring(0, 247) + '…' : abs;
+
+                            var footer = document.createElement('div');
+                            footer.className = 'comCard-footer';
+
+                            var meta = document.createElement('span');
+                            meta.className = 'comCard-doi';
+                            meta.textContent = '';
+
+                            var actions = document.createElement('div');
+                            actions.className = 'comCard-actions';
+
+                            var fullBtn = document.createElement('button');
+                            fullBtn.className = 'comCard-btn outline';
+                            fullBtn.textContent = '↗ Full Text';
+                            fullBtn.addEventListener('click', function () {
+                                window.location.href = '/journal.html?id=' + encodeURIComponent(j._id);
+                            });
+
+                            actions.appendChild(fullBtn);
+
+                            footer.appendChild(meta);
+                            footer.appendChild(actions);
+
+                            card.appendChild(header);
+                            card.appendChild(title);
+                            card.appendChild(authors);
+                            card.appendChild(desc);
+                            card.appendChild(footer);
+
+                            articlesContainer.appendChild(card);
+                        });
+                    })
+                    .catch(function () {
+                        articlesContainer.innerHTML = '<p style="text-align:center;font-size:1.1rem;color:#64748b;">Unable to load articles for this issue.</p>';
+                    });
+            }
+        })();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Issue Management - The Nexus</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="header"></div>
+
+    <main id="page-content" style="width: 80%; margin: 60px auto">
+      <section class="submit-prep-container">
+        <h2 class="submit-prep-title" id="issue-form-heading">
+          Create New Issue
+        </h2>
+        <p class="submit-prep-subtitle" id="issue-form-subtitle">
+          Define journal issues (volume, issue, month, year) and optional
+          description/PDF link.
+        </p>
+
+        <form
+          id="issue-form"
+          class="submit-prep-card"
+          style="margin-bottom: 28px"
+        >
+          <div class="submit-prep-columns">
+            <div class="submit-prep-column">
+              <label>Journal Title</label>
+              <input
+                type="text"
+                id="issue-journalTitle"
+                style="width: 100%; margin-bottom: 10px"
+                placeholder="The Nexus Journal of Research and Innovation"
+              />
+
+              <label>Volume *</label>
+              <input
+                type="number"
+                id="issue-volume"
+                required
+                style="width: 100%; margin-bottom: 10px"
+                placeholder="5"
+              />
+
+              <label>Issue Number *</label>
+              <input
+                type="number"
+                id="issue-number"
+                required
+                style="width: 100%; margin-bottom: 10px"
+                placeholder="1"
+              />
+            </div>
+
+            <div class="submit-prep-column">
+              <label>Month *</label>
+              <input
+                type="text"
+                id="issue-month"
+                required
+                style="width: 100%; margin-bottom: 10px"
+                placeholder="March"
+              />
+
+              <label>Year *</label>
+              <input
+                type="number"
+                id="issue-year"
+                required
+                style="width: 100%; margin-bottom: 10px"
+                placeholder="2026"
+              />
+
+              <label>Issue PDF URL (optional)</label>
+              <input
+                type="text"
+                id="issue-pdfUrl"
+                style="width: 100%; margin-bottom: 10px"
+                placeholder="https://.../vol5-issue1.pdf"
+              />
+            </div>
+          </div>
+
+          <label>Description (optional)</label>
+          <textarea
+            id="issue-description"
+            rows="3"
+            style="width: 100%; margin-bottom: 14px"
+            placeholder="Short description of this issue."
+          ></textarea>
+
+          <div style="display: flex; gap: 10px; flex-wrap: wrap">
+            <button
+              type="submit"
+              class="submit-start-btn"
+              id="issue-submit-btn"
+              style="max-width: 200px"
+            >
+              Create Issue
+            </button>
+            <button
+              type="button"
+              class="submit-start-btn"
+              id="issue-cancel-edit-btn"
+              style="
+                max-width: 160px;
+                display: none;
+                background: #e5e7eb;
+                color: #111827;
+              "
+            >
+              Cancel Edit
+            </button>
+          </div>
+
+          <p
+            id="issue-message"
+            class="submit-subtitle"
+            style="margin-top: 10px"
+          ></p>
+        </form>
+      </section>
+
+      <section class="submit-prep-container">
+        <h2 class="submit-prep-title">All Issues</h2>
+        <div class="submit-prep-card">
+          <table
+            style="width: 100%; border-collapse: collapse; font-size: 14px"
+            id="issue-table"
+          >
+            <thead>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 8px;
+                    border-bottom: 1px solid #e5e7eb;
+                  "
+                >
+                  Volume
+                </th>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 8px;
+                    border-bottom: 1px solid #e5e7eb;
+                  "
+                >
+                  Issue
+                </th>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 8px;
+                    border-bottom: 1px solid #e5e7eb;
+                  "
+                >
+                  Month / Year
+                </th>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 8px;
+                    border-bottom: 1px solid #e5e7eb;
+                  "
+                >
+                  Created
+                </th>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 8px;
+                    border-bottom: 1px solid #e5e7eb;
+                  "
+                >
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody id="issue-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <div id="footer"></div>
+
+    <script src="./app.js"></script>
+    <script src="./footer.js"></script>
+    <script src="./header.js"></script>
+    <script>
+      (function () {
+        var form = document.getElementById("issue-form");
+        var msg = document.getElementById("issue-message");
+        var heading = document.getElementById("issue-form-heading");
+        var subtitle = document.getElementById("issue-form-subtitle");
+        var submitBtn = document.getElementById("issue-submit-btn");
+        var cancelEditBtn = document.getElementById("issue-cancel-edit-btn");
+        var tableBody = document.getElementById("issue-table-body");
+        var editingId = null;
+
+        if (!form) return;
+
+        // Require login; if not logged in, redirect to login page
+        fetch("/api/auth/me", { credentials: "include" })
+          .then(function (res) {
+            if (!res.ok) throw new Error("not auth");
+            return res.json();
+          })
+          .then(function () {
+            loadIssues();
+          })
+          .catch(function () {
+            window.location.href = "/login.html";
+          });
+
+        function setFormFromIssue(issue) {
+          document.getElementById("issue-journalTitle").value =
+            issue.journalTitle || "";
+          document.getElementById("issue-volume").value = issue.volume || "";
+          document.getElementById("issue-number").value =
+            issue.issueNumber || "";
+          document.getElementById("issue-month").value = issue.month || "";
+          document.getElementById("issue-year").value = issue.year || "";
+          document.getElementById("issue-pdfUrl").value = issue.pdfUrl || "";
+          document.getElementById("issue-description").value =
+            issue.description || "";
+        }
+
+        function resetForm() {
+          editingId = null;
+          form.reset();
+          if (heading) heading.textContent = "Create New Issue";
+          if (subtitle)
+            subtitle.textContent =
+              "Define journal issues (volume, issue, month, year) and optional description/PDF link.";
+          if (submitBtn) submitBtn.textContent = "Create Issue";
+          if (cancelEditBtn) cancelEditBtn.style.display = "none";
+          if (msg) msg.textContent = "";
+        }
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          if (msg) msg.textContent = "";
+
+          var body = {
+            journalTitle:
+              document.getElementById("issue-journalTitle").value.trim() ||
+              undefined,
+            volume: Number(document.getElementById("issue-volume").value),
+            issueNumber: Number(document.getElementById("issue-number").value),
+            month: document.getElementById("issue-month").value.trim(),
+            year: Number(document.getElementById("issue-year").value),
+            pdfUrl:
+              document.getElementById("issue-pdfUrl").value.trim() || undefined,
+            description:
+              document.getElementById("issue-description").value.trim() ||
+              undefined,
+          };
+
+          if (!body.volume || !body.issueNumber || !body.month || !body.year) {
+            alert("Please fill in volume, issue number, month, and year.");
+            return;
+          }
+
+          var endpoint = editingId
+            ? "/api/issues/" + encodeURIComponent(editingId)
+            : "/api/issues";
+          var method = editingId ? "PUT" : "POST";
+
+          fetch(endpoint, {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(body),
+          })
+            .then(function (res) {
+              return res
+                .json()
+                .catch(function () {
+                  return {};
+                })
+                .then(function (data) {
+                  return { ok: res.ok, status: res.status, data: data };
+                });
+            })
+            .then(function (result) {
+              if (!result.ok) {
+                var m =
+                  result.data && result.data.message
+                    ? result.data.message
+                    : "Request failed.";
+                if (msg) msg.textContent = m;
+                else alert(m);
+                return;
+              }
+              if (editingId) {
+                if (msg) msg.textContent = "Issue updated successfully.";
+              } else {
+                if (msg) msg.textContent = "Issue created successfully.";
+              }
+              resetForm();
+              loadIssues();
+            })
+            .catch(function () {
+              if (msg) msg.textContent = "Network error while saving issue.";
+              else alert("Network error while saving issue.");
+            });
+        });
+
+        if (cancelEditBtn) {
+          cancelEditBtn.addEventListener("click", function () {
+            resetForm();
+          });
+        }
+
+        function loadIssues() {
+          if (!tableBody) return;
+          tableBody.innerHTML =
+            '<tr><td colspan="5" style="padding:8px;">Loading...</td></tr>';
+          fetch("/api/issues", { credentials: "include" })
+            .then(function (res) {
+              return res.json();
+            })
+            .then(function (issues) {
+              if (!Array.isArray(issues) || issues.length === 0) {
+                tableBody.innerHTML =
+                  '<tr><td colspan="5" style="padding:8px;">No issues created yet.</td></tr>';
+                return;
+              }
+              tableBody.innerHTML = "";
+              issues.forEach(function (issue) {
+                var tr = document.createElement("tr");
+
+                function td(text) {
+                  var cell = document.createElement("td");
+                  cell.style.padding = "8px";
+                  cell.style.borderBottom = "1px solid #e5e7eb";
+                  cell.textContent = text || "";
+                  return cell;
+                }
+
+                var dateStr = "";
+                if (issue.createdAt) {
+                  var d = new Date(issue.createdAt);
+                  dateStr = d.toLocaleDateString();
+                }
+
+                tr.appendChild(td("Vol. " + issue.volume));
+                tr.appendChild(td("Issue " + issue.issueNumber));
+                tr.appendChild(
+                  td((issue.month || "") + " " + (issue.year || "")),
+                );
+                tr.appendChild(td(dateStr));
+
+                var actionsTd = document.createElement("td");
+                actionsTd.style.padding = "8px";
+                actionsTd.style.borderBottom = "1px solid #e5e7eb";
+
+                var editBtn = document.createElement("button");
+                editBtn.textContent = "Edit";
+                editBtn.style.marginRight = "8px";
+                editBtn.className = "submit-start-btn";
+                editBtn.style.maxWidth = "80px";
+                editBtn.style.padding = "6px 10px";
+                editBtn.style.fontSize = "12px";
+                editBtn.addEventListener("click", function () {
+                  editingId = issue._id;
+                  setFormFromIssue(issue);
+                  if (heading) heading.textContent = "Edit Issue";
+                  if (subtitle)
+                    subtitle.textContent =
+                      "Update volume, issue number, and other details.";
+                  if (submitBtn) submitBtn.textContent = "Update Issue";
+                  if (cancelEditBtn)
+                    cancelEditBtn.style.display = "inline-block";
+                  if (msg) msg.textContent = "";
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                });
+
+                var delBtn = document.createElement("button");
+                delBtn.textContent = "Delete";
+                delBtn.style.background = "#dc2626";
+                delBtn.style.color = "#fff";
+                delBtn.className = "submit-start-btn";
+                delBtn.style.maxWidth = "80px";
+                delBtn.style.padding = "6px 10px";
+                delBtn.style.fontSize = "12px";
+                delBtn.addEventListener("click", function () {
+                  if (!confirm("Are you sure you want to delete this issue?"))
+                    return;
+                  fetch("/api/issues/" + encodeURIComponent(issue._id), {
+                    method: "DELETE",
+                    credentials: "include",
+                  })
+                    .then(function (res) {
+                      return res
+                        .json()
+                        .catch(function () {
+                          return {};
+                        })
+                        .then(function (data) {
+                          return { ok: res.ok, data: data };
+                        });
+                    })
+                    .then(function (result) {
+                      if (!result.ok) {
+                        var m =
+                          result.data && result.data.message
+                            ? result.data.message
+                            : "Delete failed.";
+                        alert(m);
+                        return;
+                      }
+                      if (msg) msg.textContent = "Issue deleted.";
+                      if (editingId === issue._id) {
+                        resetForm();
+                      }
+                      loadIssues();
+                    })
+                    .catch(function () {
+                      alert("Network error while deleting issue.");
+                    });
+                });
+
+                actionsTd.appendChild(editBtn);
+                actionsTd.appendChild(delBtn);
+                tr.appendChild(actionsTd);
+
+                tableBody.appendChild(tr);
+              });
+            })
+            .catch(function () {
+              tableBody.innerHTML =
+                '<tr><td colspan="5" style="padding:8px;">Unable to load issues.</td></tr>';
+            });
+        }
+      })();
+    </script>
+  </body>
+</html>
