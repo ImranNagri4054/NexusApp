@@ -21,6 +21,7 @@ const journalSchema = new mongoose.Schema(
     references: { type: String, required: true },
     keywords: { type: String },
     imagePath: { type: String },
+    pdfPath: { type: String },
     // Extra flexible field for additional sections
     extraSections: {
       type: Map,

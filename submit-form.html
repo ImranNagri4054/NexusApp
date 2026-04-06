@@ -1,80 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Submit New Manuscript</title>
-    <link rel="stylesheet" href="./submit.css">
-</head>
-<body>
+    <link rel="stylesheet" href="./submit.css" />
+  </head>
+  <body>
     <div id="header"></div>
 
     <main id="page-content">
-        <section class="submit-prep-container" style="padding-top: 210px;">
-            <h2 class="submit-prep-title" id="sf-heading">Submit a New Manuscript</h2>
-            <p class="submit-prep-subtitle" id="sf-subheading">
-                Provide the required sections below. Fields marked with * are mandatory.
-            </p>
+      <section class="submit-prep-container">
+        <h2 class="submit-prep-title" id="sf-heading">
+          Submit a New Manuscript
+        </h2>
+        <p class="submit-prep-subtitle" id="sf-subheading">
+          Provide the required sections below. Fields marked with * are
+          mandatory.
+        </p>
 
-            <form id="journal-create-form" class="submit-prep-card">
-                <div class="submit-prep-columns">
-                    <div class="submit-prep-column">
-                        <label for="sf-title">Title *</label>
-                        <input type="text" id="sf-title" required style="width: 100%; margin-bottom: 12px;" placeholder="Predicting House Prices Using Machine Learning Algorithms">
+        <form id="journal-create-form" class="submit-prep-card">
+          <div class="submit-prep-columns">
+            <div class="submit-prep-column">
+              <label for="sf-title">Title *</label>
+              <input
+                type="text"
+                id="sf-title"
+                required
+                style="width: 100%; margin-bottom: 12px"
+                placeholder="Predicting House Prices Using Machine Learning Algorithms"
+              />
 
-                        <label for="sf-keywords">Keywords (optional)</label>
-                        <input type="text" id="sf-keywords" placeholder="Machine Learning, House Price Prediction, Regression Models, Random Forest" style="width: 100%; margin-bottom: 12px;">
+              <label for="sf-keywords">Keywords (optional)</label>
+              <input
+                type="text"
+                id="sf-keywords"
+                placeholder="Machine Learning, House Price Prediction, Regression Models, Random Forest"
+                style="width: 100%; margin-bottom: 12px"
+              />
 
-                        <label>Authors (optional)</label>
-                        <div id="sf-authors-control" style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
-                            <input type="text" id="sf-author-input" placeholder="Author name" style="flex:1;min-width:180px;">
-                            <button type="button" class="submit-start-btn" id="sf-add-author-btn" style="max-width:120px;padding:6px 10px;font-size:12px;">
-                                Add Author
-                            </button>
-                        </div>
-                        <ul id="sf-authors-list" style="list-style:none;padding-left:0;margin-bottom:12px;"></ul>
-                        <input type="hidden" id="sf-authors">
-
-                        <label for="sf-image">Cover Image (optional)</label>
-                        <input type="file" id="sf-image" accept="image/*" style="width: 100%; margin-bottom: 12px;">
-
-                        <label for="sf-abstract">Abstract *</label>
-                        <textarea id="sf-abstract" rows="6" required style="width: 100%; margin-bottom: 12px;" placeholder="Short summary of objectives, methods, results, and conclusions...&#10;&#10;You can include multiple paragraphs here."></textarea>
-                    </div>
-
-                    <div class="submit-prep-column">
-                        <label for="sf-introduction">Introduction *</label>
-                        <textarea id="sf-introduction" rows="6" required style="width: 100%; margin-bottom: 12px;" placeholder="Introduce the problem, motivation, and objectives."></textarea>
-
-                        <label for="sf-methods">Methods *</label>
-                        <textarea id="sf-methods" rows="6" required style="width: 100%; margin-bottom: 12px;" placeholder="You may structure this section with headings and bullet points, for example:&#10;&#10;Dataset&#10;- Number of bedrooms&#10;- Number of bathrooms&#10;- Square footage&#10;- Location&#10;&#10;Data Preprocessing&#10;- Handling missing values&#10;- Encoding categorical variables&#10;- Feature scaling and normalization&#10;- Removing outliers&#10;&#10;Machine Learning Models&#10;- Linear Regression&#10;- Decision Tree Regression&#10;- Random Forest Regression&#10;&#10;Evaluation Metrics&#10;- MAE&#10;- MSE&#10;- RMSE&#10;- R² Score"></textarea>
-                    </div>
-                </div>
-
-                <label for="sf-issue">Assign to Issue (optional)</label>
-                <select id="sf-issue" style="width: 100%; margin-bottom: 12px;">
-                    <option value="">Unassigned (no issue)</option>
-                </select>
-
-                <label for="sf-results">Results *</label>
-                <textarea id="sf-results" rows="6" required style="width: 100%; margin-bottom: 12px;" placeholder="Summarize key findings. You can include simple tables as text, for example:&#10;&#10;Model\tRMSE\tR² Score&#10;Linear Regression\t32000\t0.78&#10;Decision Tree\t29000\t0.82&#10;Random Forest\t21000\t0.91"></textarea>
-
-                <label for="sf-discussion">Discussion *</label>
-                <textarea id="sf-discussion" rows="6" required style="width: 100%; margin-bottom: 12px;" placeholder="Interpret the results, compare models, and discuss limitations."></textarea>
-
-                <label for="sf-references">References *</label>
-                <textarea id="sf-references" rows="4" required style="width: 100%; margin-bottom: 12px;" placeholder="List your references, one per line."></textarea>
-
-                <label for="sf-conclusion">Conclusion (optional)</label>
-                <textarea id="sf-conclusion" rows="3" style="width: 100%; margin-bottom: 18px;" placeholder="Summarize the main contributions and possible future work."></textarea>
-
-                <button type="submit" class="submit-start-btn">
-                    Submit Manuscript
+              <label>Authors (optional)</label>
+              <div
+                id="sf-authors-control"
+                style="
+                  display: flex;
+                  gap: 8px;
+                  margin-bottom: 8px;
+                  flex-wrap: wrap;
+                "
+              >
+                <input
+                  type="text"
+                  id="sf-author-input"
+                  placeholder="Author name"
+                  style="flex: 1; min-width: 180px"
+                />
+                <button
+                  type="button"
+                  class="submit-start-btn"
+                  id="sf-add-author-btn"
+                  style="max-width: 120px; padding: 6px 10px; font-size: 12px"
+                >
+                  Add Author
                 </button>
+              </div>
+              <ul
+                id="sf-authors-list"
+                style="list-style: none; padding-left: 0; margin-bottom: 12px"
+              ></ul>
+              <input type="hidden" id="sf-authors" />
 
-                <p id="sf-message" class="submit-subtitle" style="margin-top: 12px;"></p>
-            </form>
-        </section>
+              <label for="sf-image">Cover Image (optional)</label>
+              <input
+                type="file"
+                id="sf-image"
+                accept="image/*"
+                style="width: 100%; margin-bottom: 12px"
+              />
+
+              <label for="sf-pdf">Manuscript PDF (optional)</label>
+              <input
+                type="file"
+                id="sf-pdf"
+                accept="application/pdf,.pdf"
+                style="width: 100%; margin-bottom: 12px"
+              />
+
+              <label for="sf-abstract">Abstract *</label>
+              <textarea
+                id="sf-abstract"
+                rows="6"
+                required
+                style="width: 100%; margin-bottom: 12px"
+                placeholder="Short summary of objectives, methods, results, and conclusions...&#10;&#10;You can include multiple paragraphs here."
+              ></textarea>
+            </div>
+
+            <div class="submit-prep-column">
+              <label for="sf-introduction">Introduction *</label>
+              <textarea
+                id="sf-introduction"
+                rows="6"
+                required
+                style="width: 100%; margin-bottom: 12px"
+                placeholder="Introduce the problem, motivation, and objectives."
+              ></textarea>
+
+              <label for="sf-methods">Methods *</label>
+              <textarea
+                id="sf-methods"
+                rows="6"
+                required
+                style="width: 100%; margin-bottom: 12px"
+                placeholder="You may structure this section with headings and bullet points, for example:&#10;&#10;Dataset&#10;- Number of bedrooms&#10;- Number of bathrooms&#10;- Square footage&#10;- Location&#10;&#10;Data Preprocessing&#10;- Handling missing values&#10;- Encoding categorical variables&#10;- Feature scaling and normalization&#10;- Removing outliers&#10;&#10;Machine Learning Models&#10;- Linear Regression&#10;- Decision Tree Regression&#10;- Random Forest Regression&#10;&#10;Evaluation Metrics&#10;- MAE&#10;- MSE&#10;- RMSE&#10;- R² Score"
+              ></textarea>
+            </div>
+          </div>
+
+          <label for="sf-issue">Assign to Issue (optional)</label>
+          <select id="sf-issue" style="width: 100%; margin-bottom: 12px">
+            <option value="">Unassigned (no issue)</option>
+          </select>
+
+          <label for="sf-results">Results *</label>
+          <textarea
+            id="sf-results"
+            rows="6"
+            required
+            style="width: 100%; margin-bottom: 12px"
+            placeholder="Summarize key findings. You can include simple tables as text, for example:&#10;&#10;Model\tRMSE\tR² Score&#10;Linear Regression\t32000\t0.78&#10;Decision Tree\t29000\t0.82&#10;Random Forest\t21000\t0.91"
+          ></textarea>
+
+          <label for="sf-discussion">Discussion *</label>
+          <textarea
+            id="sf-discussion"
+            rows="6"
+            required
+            style="width: 100%; margin-bottom: 12px"
+            placeholder="Interpret the results, compare models, and discuss limitations."
+          ></textarea>
+
+          <label for="sf-references">References *</label>
+          <textarea
+            id="sf-references"
+            rows="4"
+            required
+            style="width: 100%; margin-bottom: 12px"
+            placeholder="List your references, one per line."
+          ></textarea>
+
+          <label for="sf-conclusion">Conclusion (optional)</label>
+          <textarea
+            id="sf-conclusion"
+            rows="3"
+            style="width: 100%; margin-bottom: 18px"
+            placeholder="Summarize the main contributions and possible future work."
+          ></textarea>
+
+          <button type="submit" class="submit-start-btn">
+            Submit Manuscript
+          </button>
+
+          <p
+            id="sf-message"
+            class="submit-subtitle"
+            style="margin-top: 12px"
+          ></p>
+        </form>
+      </section>
     </main>
 
     <div id="footer"></div>
@@ -83,221 +176,289 @@
     <script src="./footer.js"></script>
     <script src="./header.js"></script>
     <script>
-        (function () {
-            var form = document.getElementById('journal-create-form');
-            var msg = document.getElementById('sf-message');
-            var heading = document.getElementById('sf-heading');
-            var subheading = document.getElementById('sf-subheading');
-            var params = new URLSearchParams(window.location.search);
-            var editId = params.get('id');
-            var issueSelect = document.getElementById('sf-issue');
-            var authorsHidden = document.getElementById('sf-authors');
-            var authorsList = document.getElementById('sf-authors-list');
-            var authorInput = document.getElementById('sf-author-input');
-            var addAuthorBtn = document.getElementById('sf-add-author-btn');
+      (function () {
+        var form = document.getElementById("journal-create-form");
+        var msg = document.getElementById("sf-message");
+        var heading = document.getElementById("sf-heading");
+        var subheading = document.getElementById("sf-subheading");
+        var params = new URLSearchParams(window.location.search);
+        var editId = params.get("id");
+        var issueSelect = document.getElementById("sf-issue");
+        var authorsHidden = document.getElementById("sf-authors");
+        var authorsList = document.getElementById("sf-authors-list");
+        var authorInput = document.getElementById("sf-author-input");
+        var addAuthorBtn = document.getElementById("sf-add-author-btn");
 
-            if (!form) return;
+        if (!form) return;
 
-            function renderAuthors(authors) {
-                if (!authorsList || !authorsHidden) return;
-                authorsList.innerHTML = '';
-                (authors || []).forEach(function (name) {
-                    if (!name) return;
-                    var li = document.createElement('li');
-                    li.style.marginBottom = '4px';
-                    li.dataset.author = name;
-                    li.innerHTML = '<span>' + name + '</span> ' +
-                      '<button type="button" style="margin-left:8px;font-size:11px;padding:2px 6px;" class="submit-start-btn sf-remove-author-btn">Remove</button>';
-                    authorsList.appendChild(li);
-                });
-                authorsHidden.value = JSON.stringify(authors || []);
+        function renderAuthors(authors) {
+          if (!authorsList || !authorsHidden) return;
+          authorsList.innerHTML = "";
+          (authors || []).forEach(function (name) {
+            if (!name) return;
+            var li = document.createElement("li");
+            li.style.marginBottom = "4px";
+            li.dataset.author = name;
+            li.innerHTML =
+              "<span>" +
+              name +
+              "</span> " +
+              '<button type="button" style="margin-left:8px;font-size:11px;padding:2px 6px;" class="submit-start-btn sf-remove-author-btn">Remove</button>';
+            authorsList.appendChild(li);
+          });
+          authorsHidden.value = JSON.stringify(authors || []);
+        }
+
+        function getAuthorsFromDom() {
+          if (!authorsList) return [];
+          var items = authorsList.querySelectorAll("li[data-author]");
+          var res = [];
+          items.forEach(function (li) {
+            var n = li.dataset.author;
+            if (n) res.push(n);
+          });
+          return res;
+        }
+
+        if (addAuthorBtn && authorInput && authorsList) {
+          addAuthorBtn.addEventListener("click", function () {
+            var name = authorInput.value.trim();
+            if (!name) return;
+            var current = getAuthorsFromDom();
+            if (!current.includes(name)) {
+              current.push(name);
+              renderAuthors(current);
             }
+            authorInput.value = "";
+          });
 
-            function getAuthorsFromDom() {
-                if (!authorsList) return [];
-                var items = authorsList.querySelectorAll('li[data-author]');
-                var res = [];
-                items.forEach(function (li) {
-                    var n = li.dataset.author;
-                    if (n) res.push(n);
-                });
-                return res;
+          authorsList.addEventListener("click", function (e) {
+            if (
+              e.target &&
+              e.target.classList.contains("sf-remove-author-btn")
+            ) {
+              var li = e.target.closest("li[data-author]");
+              if (!li) return;
+              var name = li.dataset.author;
+              var current = getAuthorsFromDom().filter(function (n) {
+                return n !== name;
+              });
+              renderAuthors(current);
             }
+          });
+        }
 
-            if (addAuthorBtn && authorInput && authorsList) {
-                addAuthorBtn.addEventListener('click', function () {
-                    var name = authorInput.value.trim();
-                    if (!name) return;
-                    var current = getAuthorsFromDom();
-                    if (!current.includes(name)) {
-                        current.push(name);
-                        renderAuthors(current);
-                    }
-                    authorInput.value = '';
-                });
-
-                authorsList.addEventListener('click', function (e) {
-                    if (e.target && e.target.classList.contains('sf-remove-author-btn')) {
-                        var li = e.target.closest('li[data-author]');
-                        if (!li) return;
-                        var name = li.dataset.author;
-                        var current = getAuthorsFromDom().filter(function (n) { return n !== name; });
-                        renderAuthors(current);
-                    }
-                });
-            }
-
-            // Load issues for dropdown
-            if (issueSelect) {
-                fetch('/api/issues')
-                    .then(function (res) { return res.json(); })
-                    .then(function (issues) {
-                        if (!Array.isArray(issues)) return;
-                        issues.forEach(function (issue) {
-                            var opt = document.createElement('option');
-                            opt.value = issue._id;
-                            opt.textContent = 'Vol. ' + issue.volume + ', Issue ' + issue.issueNumber + ' (' + (issue.month || '') + ' ' + (issue.year || '') + ')';
-                            issueSelect.appendChild(opt);
-                        });
-                    })
-                    .catch(function () {
-                        // ignore; dropdown just stays with default option
-                    });
-            }
-
-            // If editing, load existing journal and prefill form
-            if (editId) {
-                if (heading) heading.textContent = 'Edit Manuscript';
-                if (subheading) subheading.textContent = 'Update your manuscript details and save changes.';
-                fetch('/api/journals/' + encodeURIComponent(editId))
-                    .then(function (res) {
-                        if (!res.ok) throw new Error('not found');
-                        return res.json();
-                    })
-                    .then(function (j) {
-                        document.getElementById('sf-title').value = j.title || '';
-                        document.getElementById('sf-keywords').value = j.keywords || (j.extraSections && j.extraSections.keywords) || '';
-                        document.getElementById('sf-abstract').value = j.abstract || '';
-                        document.getElementById('sf-introduction').value = j.introduction || '';
-                        document.getElementById('sf-methods').value = j.methods || '';
-                        document.getElementById('sf-results').value = j.results || '';
-                        document.getElementById('sf-discussion').value = j.discussion || '';
-                        document.getElementById('sf-references').value = j.references || '';
-                        document.getElementById('sf-conclusion').value = (j.extraSections && j.extraSections.conclusion) || '';
-                        if (issueSelect && j.issue) {
-                            issueSelect.value = j.issue;
-                        }
-                        if (j.authors && Array.isArray(j.authors) && j.authors.length && authorsHidden) {
-                            renderAuthors(j.authors);
-                        }
-                        var btn = form.querySelector('.submit-start-btn');
-                        if (btn) btn.textContent = 'Update Manuscript';
-                    })
-                    .catch(function () {
-                        if (msg) msg.textContent = 'Unable to load article for editing.';
-                    });
-            }
-
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                if (msg) msg.textContent = '';
-
-                var title = document.getElementById('sf-title').value.trim();
-                var keywords = document.getElementById('sf-keywords').value.trim();
-                var imageInput = document.getElementById('sf-image');
-                var abstractText = document.getElementById('sf-abstract').value.trim();
-                var introduction = document.getElementById('sf-introduction').value.trim();
-                var methods = document.getElementById('sf-methods').value.trim();
-                var results = document.getElementById('sf-results').value.trim();
-                var discussion = document.getElementById('sf-discussion').value.trim();
-                var references = document.getElementById('sf-references').value.trim();
-                var conclusion = document.getElementById('sf-conclusion').value.trim();
-
-                if (!title || !abstractText || !introduction || !methods || !results || !discussion || !references) {
-                    alert('Please fill in all required fields.');
-                    return;
-                }
-
-                var extraSections = {};
-                if (conclusion) {
-                    extraSections.conclusion = conclusion;
-                }
-
-                var formData = new FormData();
-                formData.append('title', title);
-                formData.append('abstract', abstractText);
-                formData.append('introduction', introduction);
-                formData.append('methods', methods);
-                formData.append('results', results);
-                formData.append('discussion', discussion);
-                formData.append('references', references);
-                if (keywords) {
-                    formData.append('keywords', keywords);
-                    extraSections.keywords = keywords;
-                }
-                if (issueSelect && issueSelect.value) {
-                    formData.append('issue', issueSelect.value);
-                }
-                var authorsArr = authorsHidden && authorsHidden.value ? JSON.parse(authorsHidden.value || '[]') : [];
-                if (authorsArr.length) {
-                    formData.append('authors', JSON.stringify(authorsArr));
-                }
-                if (Object.keys(extraSections).length > 0) {
-                    formData.append('extraSections', JSON.stringify(extraSections));
-                }
-                if (imageInput && imageInput.files && imageInput.files[0]) {
-                    formData.append('image', imageInput.files[0]);
-                }
-
-                var endpoint = editId ? ('/api/journals/' + encodeURIComponent(editId)) : '/api/journals';
-                var method = editId ? 'PUT' : 'POST';
-
-                fetch(endpoint, {
-                    method: method,
-                    credentials: 'include',
-                    body: formData
-                })
-                    .then(function (res) {
-                        return res.json().catch(function () { return {}; }).then(function (data) {
-                            return { ok: res.ok, status: res.status, data: data };
-                        });
-                    })
-                    .then(function (result) {
-                        if (result.status === 401) {
-                            window.location.href = '/login.html';
-                            return;
-                        }
-                        if (!result.ok) {
-                            var m = result.data && result.data.message ? result.data.message : 'Submission failed.';
-                            if (msg) msg.textContent = m;
-                            else alert(m);
-                            return;
-                        }
-
-                        if (editId) {
-                            if (msg) {
-                                msg.textContent = 'Manuscript updated successfully.';
-                            }
-                            window.location.href = '/journal.html?id=' + encodeURIComponent(editId);
-                        } else {
-                            if (msg) {
-                                msg.textContent = 'Manuscript submitted successfully.';
-                            } else {
-                                alert('Manuscript submitted successfully.');
-                            }
-                            form.reset();
-                        }
-                    })
-                    .catch(function () {
-                        if (msg) {
-                            msg.textContent = 'Network error while submitting manuscript.';
-                        } else {
-                            alert('Network error while submitting manuscript.');
-                        }
-                    });
+        // Load issues for dropdown
+        if (issueSelect) {
+          fetch("/api/issues")
+            .then(function (res) {
+              return res.json();
+            })
+            .then(function (issues) {
+              if (!Array.isArray(issues)) return;
+              issues.forEach(function (issue) {
+                var opt = document.createElement("option");
+                opt.value = issue._id;
+                opt.textContent =
+                  "Vol. " +
+                  issue.volume +
+                  ", Issue " +
+                  issue.issueNumber +
+                  " (" +
+                  (issue.month || "") +
+                  " " +
+                  (issue.year || "") +
+                  ")";
+                issueSelect.appendChild(opt);
+              });
+            })
+            .catch(function () {
+              // ignore; dropdown just stays with default option
             });
-        })();
-    </script>
-</body>
-</html>
+        }
 
+        // If editing, load existing journal and prefill form
+        if (editId) {
+          if (heading) heading.textContent = "Edit Manuscript";
+          if (subheading)
+            subheading.textContent =
+              "Update your manuscript details and save changes.";
+          fetch("/api/journals/" + encodeURIComponent(editId))
+            .then(function (res) {
+              if (!res.ok) throw new Error("not found");
+              return res.json();
+            })
+            .then(function (j) {
+              document.getElementById("sf-title").value = j.title || "";
+              document.getElementById("sf-keywords").value =
+                j.keywords ||
+                (j.extraSections && j.extraSections.keywords) ||
+                "";
+              document.getElementById("sf-abstract").value = j.abstract || "";
+              document.getElementById("sf-introduction").value =
+                j.introduction || "";
+              document.getElementById("sf-methods").value = j.methods || "";
+              document.getElementById("sf-results").value = j.results || "";
+              document.getElementById("sf-discussion").value =
+                j.discussion || "";
+              document.getElementById("sf-references").value =
+                j.references || "";
+              document.getElementById("sf-conclusion").value =
+                (j.extraSections && j.extraSections.conclusion) || "";
+              if (issueSelect && j.issue) {
+                issueSelect.value = j.issue;
+              }
+              if (
+                j.authors &&
+                Array.isArray(j.authors) &&
+                j.authors.length &&
+                authorsHidden
+              ) {
+                renderAuthors(j.authors);
+              }
+              var btn = form.querySelector(".submit-start-btn");
+              if (btn) btn.textContent = "Update Manuscript";
+            })
+            .catch(function () {
+              if (msg) msg.textContent = "Unable to load article for editing.";
+            });
+        }
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          if (msg) msg.textContent = "";
+
+          var title = document.getElementById("sf-title").value.trim();
+          var keywords = document.getElementById("sf-keywords").value.trim();
+          var imageInput = document.getElementById("sf-image");
+          var pdfInput = document.getElementById("sf-pdf");
+          var abstractText = document
+            .getElementById("sf-abstract")
+            .value.trim();
+          var introduction = document
+            .getElementById("sf-introduction")
+            .value.trim();
+          var methods = document.getElementById("sf-methods").value.trim();
+          var results = document.getElementById("sf-results").value.trim();
+          var discussion = document
+            .getElementById("sf-discussion")
+            .value.trim();
+          var references = document
+            .getElementById("sf-references")
+            .value.trim();
+          var conclusion = document
+            .getElementById("sf-conclusion")
+            .value.trim();
+
+          if (
+            !title ||
+            !abstractText ||
+            !introduction ||
+            !methods ||
+            !results ||
+            !discussion ||
+            !references
+          ) {
+            alert("Please fill in all required fields.");
+            return;
+          }
+
+          var extraSections = {};
+          if (conclusion) {
+            extraSections.conclusion = conclusion;
+          }
+
+          var formData = new FormData();
+          formData.append("title", title);
+          formData.append("abstract", abstractText);
+          formData.append("introduction", introduction);
+          formData.append("methods", methods);
+          formData.append("results", results);
+          formData.append("discussion", discussion);
+          formData.append("references", references);
+          if (keywords) {
+            formData.append("keywords", keywords);
+            extraSections.keywords = keywords;
+          }
+          if (issueSelect && issueSelect.value) {
+            formData.append("issue", issueSelect.value);
+          }
+          var authorsArr =
+            authorsHidden && authorsHidden.value
+              ? JSON.parse(authorsHidden.value || "[]")
+              : [];
+          if (authorsArr.length) {
+            formData.append("authors", JSON.stringify(authorsArr));
+          }
+          if (Object.keys(extraSections).length > 0) {
+            formData.append("extraSections", JSON.stringify(extraSections));
+          }
+          if (imageInput && imageInput.files && imageInput.files[0]) {
+            formData.append("image", imageInput.files[0]);
+          }
+          if (pdfInput && pdfInput.files && pdfInput.files[0]) {
+            formData.append("pdf", pdfInput.files[0]);
+          }
+
+          var endpoint = editId
+            ? "/api/journals/" + encodeURIComponent(editId)
+            : "/api/journals";
+          var method = editId ? "PUT" : "POST";
+
+          fetch(endpoint, {
+            method: method,
+            credentials: "include",
+            body: formData,
+          })
+            .then(function (res) {
+              return res
+                .json()
+                .catch(function () {
+                  return {};
+                })
+                .then(function (data) {
+                  return { ok: res.ok, status: res.status, data: data };
+                });
+            })
+            .then(function (result) {
+              if (result.status === 401) {
+                window.location.href = "/login.html";
+                return;
+              }
+              if (!result.ok) {
+                var m =
+                  result.data && result.data.message
+                    ? result.data.message
+                    : "Submission failed.";
+                if (msg) msg.textContent = m;
+                else alert(m);
+                return;
+              }
+
+              if (editId) {
+                if (msg) {
+                  msg.textContent = "Manuscript updated successfully.";
+                }
+                window.location.href =
+                  "/journal.html?id=" + encodeURIComponent(editId);
+              } else {
+                if (msg) {
+                  msg.textContent = "Manuscript submitted successfully.";
+                } else {
+                  alert("Manuscript submitted successfully.");
+                }
+                form.reset();
+              }
+            })
+            .catch(function () {
+              if (msg) {
+                msg.textContent = "Network error while submitting manuscript.";
+              } else {
+                alert("Network error while submitting manuscript.");
+              }
+            });
+        });
+      })();
+    </script>
+  </body>
+</html>

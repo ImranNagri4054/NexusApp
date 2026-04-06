@@ -33,6 +33,16 @@
           >
             Edit Article
           </button>
+          <a
+            id="journal-download-btn"
+            class="submit-start-btn"
+            href="#"
+            target="_blank"
+            rel="noopener"
+            style="max-width: 200px; display: none; padding: 0.5rem 1rem; text-align: center; text-decoration: none"
+          >
+            Download Article
+          </a>
         </div>
 
         <article class="submit-prep-card">
@@ -100,6 +110,7 @@
       (function () {
         var backBtn = document.getElementById("journal-back-btn");
         var editBtn = document.getElementById("journal-edit-btn");
+        var downloadBtn = document.getElementById("journal-download-btn");
         if (backBtn) {
           backBtn.addEventListener("click", function () {
             if (history.length > 1) {
@@ -139,6 +150,11 @@
               meta += "Published on " + d.toLocaleDateString();
             }
             document.getElementById("jd-meta").textContent = meta;
+
+            if (downloadBtn && j.pdfPath) {
+              downloadBtn.href = j.pdfPath;
+              downloadBtn.style.display = "inline-block";
+            }
 
             function setRich(id, value) {
               var el = document.getElementById(id);

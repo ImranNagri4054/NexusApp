@@ -7,7 +7,7 @@ const { authRequired } = require('../middleware/auth');
 
 const router = express.Router();
 
-// File upload config for journal images
+// File upload config for journal assets (image + pdf)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadDir = path.join(__dirname, '..', '..', 'uploads', 'journals');
@@ -27,11 +27,18 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB per file
 });
 
 // Create Journal (Create Submission)
-router.post('/', authRequired, upload.single('image'), async (req, res) => {
+router.post(
+  '/',
+  authRequired,
+  upload.fields([
+    { name: 'image', maxCount: 1 },
+    { name: 'pdf', maxCount: 1 },
+  ]),
+  async (req, res) => {
   try {
     const {
       title,
@@ -60,9 +67,11 @@ router.post('/', authRequired, upload.single('image'), async (req, res) => {
       }
     }
 
-    const imagePath = req.file
-      ? `/uploads/journals/${req.file.filename}`
-      : undefined;
+    const imageFile = req.files && req.files.image ? req.files.image[0] : null;
+    const pdfFile = req.files && req.files.pdf ? req.files.pdf[0] : null;
+
+    const imagePath = imageFile ? `/uploads/journals/${imageFile.filename}` : undefined;
+    const pdfPath = pdfFile ? `/uploads/journals/${pdfFile.filename}` : undefined;
 
     let authorsArr = [];
     if (authors) {
@@ -84,6 +93,7 @@ router.post('/', authRequired, upload.single('image'), async (req, res) => {
       references,
       keywords,
       imagePath,
+      pdfPath,
       issue: issue || undefined,
       authors: authorsArr,
       extraSections: parsedExtra,
@@ -93,14 +103,15 @@ router.post('/', authRequired, upload.single('image'), async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Failed to create journal' });
   }
-});
+}
+);
 
 // Public: list all journals (for Featured Research)
 router.get('/', async (req, res) => {
   try {
     const journals = await Journal.find({})
       .sort({ createdAt: -1 })
-      .select('title abstract createdAt imagePath keywords authors');
+      .select('title abstract createdAt imagePath pdfPath keywords authors');
     res.json(journals);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch journals' });
@@ -131,7 +142,14 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update journal
-router.put('/:id', authRequired, upload.single('image'), async (req, res) => {
+router.put(
+  '/:id',
+  authRequired,
+  upload.fields([
+    { name: 'image', maxCount: 1 },
+    { name: 'pdf', maxCount: 1 },
+  ]),
+  async (req, res) => {
   try {
     const journal = await Journal.findById(req.params.id);
     if (!journal) {
@@ -178,8 +196,13 @@ router.put('/:id', authRequired, upload.single('image'), async (req, res) => {
       }
     }
 
-    if (req.file) {
-      journal.imagePath = `/uploads/journals/${req.file.filename}`;
+    const imageFile = req.files && req.files.image ? req.files.image[0] : null;
+    const pdfFile = req.files && req.files.pdf ? req.files.pdf[0] : null;
+    if (imageFile) {
+      journal.imagePath = `/uploads/journals/${imageFile.filename}`;
+    }
+    if (pdfFile) {
+      journal.pdfPath = `/uploads/journals/${pdfFile.filename}`;
     }
 
     journal.title = title;
@@ -201,7 +224,8 @@ router.put('/:id', authRequired, upload.single('image'), async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Failed to update journal' });
   }
-});
+}
+);
 
 module.exports = router;
 
