@@ -11,6 +11,7 @@ const { connectDB } = require("./src/config/db");
 const authRoutes = require("./src/routes/auth");
 const journalRoutes = require("./src/routes/journals");
 const issueRoutes = require("./src/routes/issues");
+const adminRoutes = require("./src/routes/admin");
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/journals", journalRoutes);
 app.use("/api/issues", issueRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Serve uploaded journal images
 app.use(

@@ -3,7 +3,27 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const Journal = require('../models/Journal');
+const Issue = require('../models/Issue');
 const { authRequired } = require('../middleware/auth');
+const { optionalAuth } = require('../middleware/optionalAuth');
+
+/** Listed on the public site (homepage, etc.); excludes pending / rejected / draft. */
+function publicJournalMongoFilter() {
+  return {
+    $nor: [
+      { status: 'under_review' },
+      { status: 'resubmitted' },
+      { status: 'rejected' },
+      { status: 'draft' },
+    ],
+  };
+}
+
+function journalIsPublicPublished(doc) {
+  if (!doc.status) return true;
+  const s = doc.status;
+  return s !== 'under_review' && s !== 'resubmitted' && s !== 'rejected' && s !== 'draft';
+}
 
 const router = express.Router();
 
@@ -58,6 +78,21 @@ router.post(
       return res.status(400).json({ message: 'All core sections are required' });
     }
 
+    if (issue) {
+      const selectedIssue = await Issue.findById(issue);
+      if (!selectedIssue) {
+        return res.status(400).json({ message: 'Selected issue does not exist' });
+      }
+      if (req.user.role !== 'admin') {
+        if (!selectedIssue.createdBy) {
+          return res.status(403).json({ message: 'You can only use your own issue/volume' });
+        }
+        if (String(selectedIssue.createdBy) !== String(req.user._id)) {
+          return res.status(403).json({ message: 'You can only use your own issue/volume' });
+        }
+      }
+    }
+
     let parsedExtra = {};
     if (extraSections) {
       try {
@@ -97,6 +132,7 @@ router.post(
       issue: issue || undefined,
       authors: authorsArr,
       extraSections: parsedExtra,
+      status: 'under_review',
     });
 
     res.status(201).json(journal);
@@ -106,10 +142,10 @@ router.post(
 }
 );
 
-// Public: list all journals (for Featured Research)
+// Public: list published journals (for Featured Research)
 router.get('/', async (req, res) => {
   try {
-    const journals = await Journal.find({})
+    const journals = await Journal.find(publicJournalMongoFilter())
       .sort({ createdAt: -1 })
       .select('title abstract createdAt imagePath pdfPath keywords authors');
     res.json(journals);
@@ -128,13 +164,28 @@ router.get('/mine', authRequired, async (req, res) => {
   }
 });
 
-// Public: get single journal by id
-router.get('/:id', async (req, res) => {
+// Single journal: published for everyone; drafts / pending only for author or admin
+router.get('/:id', optionalAuth, async (req, res) => {
   try {
     const journal = await Journal.findById(req.params.id);
     if (!journal) {
       return res.status(404).json({ message: 'Journal not found' });
     }
+
+    if (journalIsPublicPublished(journal)) {
+      return res.json(journal);
+    }
+
+    if (!req.user) {
+      return res.status(404).json({ message: 'Journal not found' });
+    }
+
+    const isAuthor = String(journal.author) === String(req.user._id);
+    const isAdmin = req.user.role === 'admin';
+    if (!isAuthor && !isAdmin) {
+      return res.status(404).json({ message: 'Journal not found' });
+    }
+
     res.json(journal);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch journal' });
@@ -178,6 +229,21 @@ router.put(
       return res.status(400).json({ message: 'All core sections are required' });
     }
 
+    if (issue) {
+      const selectedIssue = await Issue.findById(issue);
+      if (!selectedIssue) {
+        return res.status(400).json({ message: 'Selected issue does not exist' });
+      }
+      if (req.user.role !== 'admin') {
+        if (!selectedIssue.createdBy) {
+          return res.status(403).json({ message: 'You can only use your own issue/volume' });
+        }
+        if (String(selectedIssue.createdBy) !== String(req.user._id)) {
+          return res.status(403).json({ message: 'You can only use your own issue/volume' });
+        }
+      }
+    }
+
     let parsedExtra = {};
     if (extraSections) {
       try {
@@ -217,6 +283,11 @@ router.put(
     journal.authors = authorsArr;
     if (Object.keys(parsedExtra).length > 0) {
       journal.extraSections = parsedExtra;
+    }
+
+    // After addressing admin feedback the author revision is tracked as resubmitted
+    if (journal.status === 'rejected' || journal.status === 'resubmitted') {
+      journal.status = 'resubmitted';
     }
 
     const saved = await journal.save();

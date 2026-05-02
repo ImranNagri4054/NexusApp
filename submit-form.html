@@ -167,6 +167,34 @@
             style="margin-top: 12px"
           ></p>
         </form>
+
+        <section
+          class="submit-prep-container"
+          id="sf-my-manuscripts-wrap"
+          style="margin-top: 28px; display: none"
+        >
+          <h3 class="submit-prep-title">My manuscripts</h3>
+          <p class="submit-prep-subtitle" id="sf-my-manuscripts-status"></p>
+          <div class="submit-prep-card" style="overflow-x: auto">
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px; min-width: 640px">
+              <thead>
+                <tr>
+                  <th style="text-align: left; padding: 8px; border-bottom: 1px solid #e5e7eb">
+                    Title
+                  </th>
+                  <th style="text-align: left; padding: 8px; border-bottom: 1px solid #e5e7eb">
+                    Status
+                  </th>
+                  <th style="text-align: left; padding: 8px; border-bottom: 1px solid #e5e7eb">
+                    Admin feedback
+                  </th>
+                  <th style="text-align: left; padding: 8px; border-bottom: 1px solid #e5e7eb"></th>
+                </tr>
+              </thead>
+              <tbody id="sf-my-manuscripts-body"></tbody>
+            </table>
+          </div>
+        </section>
       </section>
     </main>
 
@@ -248,10 +276,14 @@
           });
         }
 
-        // Load issues for dropdown
+        // Load current user's own issues for dropdown
         if (issueSelect) {
-          fetch("/api/issues")
+          fetch("/api/issues/mine", { credentials: "include" })
             .then(function (res) {
+              if (res.status === 401) {
+                window.location.href = "/login.html";
+                return [];
+              }
               return res.json();
             })
             .then(function (issues) {
@@ -271,11 +303,127 @@
                   ")";
                 issueSelect.appendChild(opt);
               });
+              if (issues.length === 0) {
+                var ownOnly = document.createElement("option");
+                ownOnly.value = "";
+                ownOnly.textContent = "No personal volumes available";
+                issueSelect.appendChild(ownOnly);
+              }
             })
             .catch(function () {
               // ignore; dropdown just stays with default option
             });
         }
+
+        function labelManuscriptStatus(s) {
+          if (!s || s === "submitted") return "Published";
+          if (s === "under_review") return "In review";
+          if (s === "resubmitted") return "Resubmitted";
+          if (s === "accepted") return "Approved";
+          if (s === "rejected") return "Rejected";
+          if (s === "draft") return "Draft";
+          return s || "—";
+        }
+
+        function loadMyManuscriptsTable() {
+          var wrap = document.getElementById("sf-my-manuscripts-wrap");
+          var tbody = document.getElementById("sf-my-manuscripts-body");
+          var st = document.getElementById("sf-my-manuscripts-status");
+          if (!tbody || !wrap) return;
+
+          tbody.innerHTML =
+            '<tr><td colspan="4" style="padding:8px;">Loading…</td></tr>';
+
+          fetch("/api/journals/mine", { credentials: "include" })
+            .then(function (res) {
+              if (res.status === 401) {
+                wrap.style.display = "none";
+                return null;
+              }
+              return res.json();
+            })
+            .then(function (items) {
+              if (!items) return;
+              wrap.style.display = "block";
+              if (st) {
+                st.textContent =
+                  "Including rejected manuscripts and reviewer feedback.";
+              }
+
+              if (!Array.isArray(items) || items.length === 0) {
+                tbody.innerHTML =
+                  '<tr><td colspan="4" style="padding:8px;">No manuscripts yet.</td></tr>';
+                return;
+              }
+
+              tbody.innerHTML = "";
+              items.forEach(function (j) {
+                var tr = document.createElement("tr");
+
+                function td(inner) {
+                  var cell = document.createElement("td");
+                  cell.style.padding = "8px";
+                  cell.style.borderBottom = "1px solid #e5e7eb";
+                  cell.style.verticalAlign = "top";
+                  if (typeof inner === "string") cell.textContent = inner;
+                  else cell.appendChild(inner);
+                  return cell;
+                }
+
+                var titleCell = document.createElement("td");
+                titleCell.style.padding = "8px";
+                titleCell.style.borderBottom = "1px solid #e5e7eb";
+                titleCell.style.verticalAlign = "top";
+                var t = document.createElement("div");
+                t.textContent = j.title || "(Untitled)";
+                titleCell.appendChild(t);
+
+                var status = labelManuscriptStatus(j.status);
+
+                var fb = "";
+                if (j.rejectionFeedback && String(j.rejectionFeedback).trim()) {
+                  fb = String(j.rejectionFeedback).trim();
+                }
+
+                var actions = document.createElement("div");
+                actions.style.display = "flex";
+                actions.style.flexDirection = "column";
+                actions.style.gap = "6px";
+
+                var v = document.createElement("a");
+                v.href =
+                  "/journal.html?id=" + encodeURIComponent(j._id);
+                v.textContent = "View";
+                v.style.fontSize = "12px";
+
+                var e = document.createElement("a");
+                e.href =
+                  "/submit-form.html?id=" +
+                  encodeURIComponent(j._id);
+                e.textContent =
+                  status === "Rejected" ||
+                  status === "Resubmitted" ||
+                  status === "In review"
+                    ? "Edit / resubmit"
+                    : "Edit";
+                e.style.fontSize = "12px";
+
+                actions.appendChild(v);
+                actions.appendChild(e);
+
+                tr.appendChild(titleCell);
+                tr.appendChild(td(status));
+                tr.appendChild(td(fb || "—"));
+                tr.appendChild(td(actions));
+                tbody.appendChild(tr);
+              });
+            })
+            .catch(function () {
+              wrap.style.display = "none";
+            });
+        }
+
+        loadMyManuscriptsTable();
 
         // If editing, load existing journal and prefill form
         if (editId) {
@@ -448,6 +596,7 @@
                   alert("Manuscript submitted successfully.");
                 }
                 form.reset();
+                loadMyManuscriptsTable();
               }
             })
             .catch(function () {

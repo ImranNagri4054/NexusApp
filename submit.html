@@ -433,10 +433,65 @@
                         return;
                     }
                     ul.innerHTML = '';
+
+                    function manuscriptStatusLabel(st) {
+                        if (!st || st === 'submitted') return 'Published';
+                        if (st === 'under_review') return 'In review';
+                        if (st === 'resubmitted') return 'Resubmitted';
+                        if (st === 'accepted') return 'Approved';
+                        if (st === 'rejected') return 'Rejected';
+                        if (st === 'draft') return 'Draft';
+                        return st;
+                    }
+
                     data.forEach(j => {
                         const li = document.createElement('li');
+                        li.style.marginBottom = '14px';
+                        li.style.lineHeight = '1.45';
+
+                        const title = document.createElement('div');
+                        title.style.fontWeight = '600';
+                        title.textContent = j.title || '(Untitled)';
+
+                        const meta = document.createElement('div');
+                        meta.style.fontSize = '13px';
+                        meta.style.color = '#64748b';
                         const created = j.createdAt ? new Date(j.createdAt).toLocaleString() : '';
-                        li.textContent = j.title + (created ? ' (' + created + ')' : '');
+                        meta.textContent = manuscriptStatusLabel(j.status) + (created ? ' · ' + created : '');
+
+                        const links = document.createElement('div');
+                        links.style.marginTop = '6px';
+                        links.style.display = 'flex';
+                        links.style.gap = '12px';
+                        links.style.flexWrap = 'wrap';
+
+                        const viewLink = document.createElement('a');
+                        viewLink.href = '/journal.html?id=' + encodeURIComponent(j._id);
+                        viewLink.textContent = 'View';
+                        viewLink.style.fontSize = '13px';
+
+                        const editLink = document.createElement('a');
+                        editLink.href = '/submit-form.html?id=' + encodeURIComponent(j._id);
+                        editLink.textContent = 'Edit';
+                        editLink.style.fontSize = '13px';
+
+                        links.appendChild(viewLink);
+                        links.appendChild(editLink);
+
+                        li.appendChild(title);
+                        li.appendChild(meta);
+
+                        if (j.rejectionFeedback && String(j.rejectionFeedback).trim()) {
+                            const fb = document.createElement('div');
+                            fb.style.marginTop = '6px';
+                            fb.style.fontSize = '13px';
+                            fb.style.color = '#991b1b';
+                            fb.style.whiteSpace = 'pre-wrap';
+                            fb.textContent = 'Admin feedback: ' + String(j.rejectionFeedback).trim();
+                            li.appendChild(fb);
+                        }
+
+                        li.appendChild(links);
                         ul.appendChild(li);
                     });
                 } catch (err) {

@@ -22,6 +22,8 @@ const journalSchema = new mongoose.Schema(
     keywords: { type: String },
     imagePath: { type: String },
     pdfPath: { type: String },
+    /** Shown to the author when status is rejected; remains visible until approve (or overwritten on next reject). */
+    rejectionFeedback: { type: String },
     // Extra flexible field for additional sections
     extraSections: {
       type: Map,
@@ -29,8 +31,8 @@ const journalSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['draft', 'submitted', 'under_review', 'accepted', 'rejected'],
-      default: 'submitted',
+      enum: ['draft', 'submitted', 'under_review', 'resubmitted', 'accepted', 'rejected'],
+      default: 'under_review',
     },
   },
   { timestamps: true }
