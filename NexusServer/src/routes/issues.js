@@ -5,7 +5,52 @@ const { authRequired } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Create issue
+/** Public issue listing: approved only; legacy docs without `status` still show. */
+function publicIssueMongoFilter() {
+  return {
+    $nor: [{ status: 'under_review' }, { status: 'rejected' }],
+  };
+}
+
+function issueIsPublicVisible(doc) {
+  if (doc.status == null || doc.status === undefined) return true;
+  return doc.status !== 'under_review' && doc.status !== 'rejected';
+}
+
+// List approved issues only (submit-form dropdown, current issues, archives flow)
+router.get('/', async (_req, res) => {
+  try {
+    const issues = await Issue.find(publicIssueMongoFilter()).sort({
+      year: -1,
+      volume: -1,
+      issueNumber: -1,
+      createdAt: -1,
+    });
+    res.json(issues);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch issues' });
+  }
+});
+
+// Authenticated: list only the current user's own issues for journal assignment
+router.get('/mine', authRequired, async (req, res) => {
+  try {
+    const issues = await Issue.find({
+      createdBy: req.user._id,
+      $nor: [{ status: 'rejected' }],
+    }).sort({
+      year: -1,
+      volume: -1,
+      issueNumber: -1,
+      createdAt: -1,
+    });
+    res.json(issues);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch your issues' });
+  }
+});
+
+// Create issue (volume) for current user; starts in review
 router.post('/', authRequired, async (req, res) => {
   try {
     const { volume, issueNumber, month, year, description, pdfUrl, journalTitle } = req.body;
@@ -15,6 +60,7 @@ router.post('/', authRequired, async (req, res) => {
     }
 
     const issue = await Issue.create({
+      createdBy: req.user._id,
       volume,
       issueNumber,
       month,
@@ -22,6 +68,7 @@ router.post('/', authRequired, async (req, res) => {
       description,
       pdfUrl,
       journalTitle,
+      status: 'under_review',
     });
 
     res.status(201).json(issue);
@@ -30,21 +77,14 @@ router.post('/', authRequired, async (req, res) => {
   }
 });
 
-// List all issues (latest first)
-router.get('/', async (req, res) => {
+router.get('/current', async (_req, res) => {
   try {
-    const issues = await Issue.find({}).sort({ year: -1, volume: -1, issueNumber: -1, createdAt: -1 });
-    res.json(issues);
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch issues' });
-  }
-});
-
-// Get current/latest issue
-router.get('/current', async (req, res) => {
-  try {
-    const issue = await Issue.findOne({})
-      .sort({ year: -1, volume: -1, issueNumber: -1, createdAt: -1 });
+    const issue = await Issue.findOne(publicIssueMongoFilter()).sort({
+      year: -1,
+      volume: -1,
+      issueNumber: -1,
+      createdAt: -1,
+    });
     if (!issue) {
       return res.status(404).json({ message: 'No issues found' });
     }
@@ -54,11 +94,13 @@ router.get('/current', async (req, res) => {
   }
 });
 
-// Get single issue
 router.get('/:id', async (req, res) => {
   try {
     const issue = await Issue.findById(req.params.id);
     if (!issue) {
+      return res.status(404).json({ message: 'Issue not found' });
+    }
+    if (!issueIsPublicVisible(issue)) {
       return res.status(404).json({ message: 'Issue not found' });
     }
     res.json(issue);
@@ -67,13 +109,19 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Update issue
+// Update own issue (or admin can update any)
 router.put('/:id', authRequired, async (req, res) => {
   try {
     const { volume, issueNumber, month, year, description, pdfUrl, journalTitle } = req.body;
     const issue = await Issue.findById(req.params.id);
     if (!issue) {
       return res.status(404).json({ message: 'Issue not found' });
+    }
+
+    const isOwner = issue.createdBy && String(issue.createdBy) === String(req.user._id);
+    const isAdmin = req.user.role === 'admin';
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: 'You are not allowed to edit this issue' });
     }
 
     issue.volume = volume ?? issue.volume;
@@ -91,30 +139,52 @@ router.put('/:id', authRequired, async (req, res) => {
   }
 });
 
-// Delete issue (does not delete journals; they retain issue reference)
+// Delete own issue (or admin can delete any)
 router.delete('/:id', authRequired, async (req, res) => {
   try {
-    const issue = await Issue.findByIdAndDelete(req.params.id);
+    const issue = await Issue.findById(req.params.id);
     if (!issue) {
       return res.status(404).json({ message: 'Issue not found' });
     }
+
+    const isOwner = issue.createdBy && String(issue.createdBy) === String(req.user._id);
+    const isAdmin = req.user.role === 'admin';
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: 'You are not allowed to delete this issue' });
+    }
+
+    await Issue.findByIdAndDelete(req.params.id);
     res.json({ message: 'Issue deleted' });
   } catch (err) {
     res.status(500).json({ message: 'Failed to delete issue' });
   }
 });
 
-// Get journals (articles) for a given issue
+// Journals assigned to this issue (published articles only)
 router.get('/:id/journals', async (req, res) => {
   try {
-    const journals = await Journal.find({ issue: req.params.id })
+    const journals = await Journal.find({
+      issue: req.params.id,
+      ...publicJournalMongoFilterFromIssues(),
+    })
       .sort({ createdAt: -1 })
-      .select('title abstract createdAt imagePath keywords authors');
+      .select('title abstract createdAt imagePath pdfPath keywords authors');
     res.json(journals);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch journals for issue' });
   }
 });
 
-module.exports = router;
+/** Same visibility rule as journals route — keep in sync. */
+function publicJournalMongoFilterFromIssues() {
+  return {
+    $nor: [
+      { status: 'under_review' },
+      { status: 'resubmitted' },
+      { status: 'rejected' },
+      { status: 'draft' },
+    ],
+  };
+}
 
+module.exports = router;

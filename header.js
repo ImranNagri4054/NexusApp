@@ -52,9 +52,9 @@ function initAuthHeader() {
     registerLinks.forEach((el) => (el.style.display = "inline-block"));
     loginLinks.forEach((el) => (el.style.display = "inline-block"));
     logoutLinks.forEach((el) => (el.style.display = "none"));
-    // if (emailEl) {
-    //   emailEl.innerHTML = '<i class="fa-regular fa-envelope"></i>';
-    // }
+    document.querySelectorAll(".nav-admin-only").forEach((el) => {
+      el.style.display = "none";
+    });
     return;
   }
 
@@ -90,10 +90,15 @@ function initAuthHeader() {
       const registerLinks = document.querySelectorAll(".auth-register");
       const loginLinks = document.querySelectorAll(".auth-login");
       const logoutLinks = document.querySelectorAll(".auth-logout");
+      const adminOnly = document.querySelectorAll(".nav-admin-only");
 
       registerLinks.forEach((el) => (el.style.display = "none"));
       loginLinks.forEach((el) => (el.style.display = "none"));
       logoutLinks.forEach((el) => (el.style.display = "inline-block"));
+
+      adminOnly.forEach((el) => {
+        el.style.display = data.user && data.user.role === "admin" ? "list-item" : "none";
+      });
 
       const logoutBtn = document.getElementById("header-logout-btn");
       if (logoutBtn) {
@@ -122,5 +127,8 @@ function initAuthHeader() {
       registerLinks.forEach((el) => (el.style.display = "inline-block"));
       loginLinks.forEach((el) => (el.style.display = "inline-block"));
       logoutLinks.forEach((el) => (el.style.display = "none"));
+      document.querySelectorAll(".nav-admin-only").forEach((el) => {
+        el.style.display = "none";
+      });
     });
 }

@@ -64,6 +64,22 @@
             style="margin-bottom: 24px"
           ></p>
 
+          <div
+            id="jd-workflow-banner"
+            style="
+              display: none;
+              margin-bottom: 20px;
+              padding: 14px 16px;
+              border-radius: 8px;
+              border: 1px solid #fecaca;
+              background: #fef2f2;
+              color: #7f1d1d;
+            "
+          >
+            <strong id="jd-workflow-title" style="display: block; margin-bottom: 6px"></strong>
+            <p id="jd-workflow-body" class="submit-subtitle" style="margin: 0; white-space: pre-wrap"></p>
+          </div>
+
           <section>
             <h2 class="submit-prep-title">Abstract</h2>
             <p id="jd-abstract" class="submit-subtitle"></p>
@@ -130,7 +146,9 @@
           return;
         }
 
-        fetch("/api/journals/" + encodeURIComponent(id))
+        fetch("/api/journals/" + encodeURIComponent(id), {
+          credentials: "include",
+        })
           .then(function (res) {
             if (!res.ok) throw new Error("Not found");
             return res.json();
@@ -147,9 +165,58 @@
             var meta = "";
             if (j.createdAt) {
               var d = new Date(j.createdAt);
-              meta += "Published on " + d.toLocaleDateString();
+              meta += "Submitted " + d.toLocaleDateString();
             }
             document.getElementById("jd-meta").textContent = meta;
+
+            function escapeHtml(t) {
+              return String(t || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+            }
+
+            var ban = document.getElementById("jd-workflow-banner");
+            var bTitle = document.getElementById("jd-workflow-title");
+            var bBody = document.getElementById("jd-workflow-body");
+            if (ban && bTitle && bBody) {
+              ban.style.display = "none";
+              if (j.status === "rejected" || j.status === "resubmitted") {
+                ban.style.display = "block";
+                if (j.status === "resubmitted") {
+                  ban.style.border = "1px solid #bae6fd";
+                  ban.style.background = "#f0f9ff";
+                  ban.style.color = "#0c4a6e";
+                  bTitle.textContent =
+                    "Resubmitted — awaiting administrator review.";
+                  var fb =
+                    j.rejectionFeedback &&
+                    String(j.rejectionFeedback).trim();
+                  if (fb) {
+                    bBody.innerHTML =
+                      "<span style=\"font-weight:600\">Previous admin feedback:</span><br>" +
+                      escapeHtml(j.rejectionFeedback);
+                  } else {
+                    bBody.innerHTML =
+                      '<span style="font-size:14px;color:#92400e">Updates sent. An administrator will review again.</span>';
+                  }
+                } else {
+                  ban.style.border = "1px solid #fecaca";
+                  ban.style.background = "#fef2f2";
+                  ban.style.color = "#7f1d1d";
+                  bTitle.textContent = "Rejected — reviewer feedback.";
+                  var rfb =
+                    j.rejectionFeedback &&
+                    String(j.rejectionFeedback).trim();
+                  if (rfb) {
+                    bBody.innerHTML = escapeHtml(j.rejectionFeedback);
+                  } else {
+                    bBody.innerHTML =
+                      '<span style="font-size:14px">No feedback text was recorded for this rejection.</span>';
+                  }
+                }
+              }
+            }
 
             if (downloadBtn && j.pdfPath) {
               downloadBtn.href = j.pdfPath;

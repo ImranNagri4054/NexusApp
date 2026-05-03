@@ -16,6 +16,13 @@ const userSchema = new mongoose.Schema(
     googleId: { type: String, index: true },
     githubId: { type: String, index: true },
 
+    /** Application role for routing and admin access; distinct from legacy `roles` below. */
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user',
+    },
+
     roles: [{ type: String, default: 'author' }],
   },
   { timestamps: true }

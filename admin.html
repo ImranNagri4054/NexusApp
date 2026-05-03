@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin – The Nexus</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="header"></div>
+
+    <main id="page-content" style="padding: 210px 20px 48px; max-width: 1100px; margin: 0 auto">
+      <h1 class="fr-title" style="margin-bottom: 8px">Admin panel</h1>
+      <p class="submit-subtitle" style="margin-bottom: 28px">
+        Review manuscript submissions and journal issues. Only approved items appear on the public website.
+      </p>
+
+      <section class="submit-prep-container" style="margin-bottom: 36px">
+        <h2 class="submit-prep-title">Manuscripts &amp; papers</h2>
+        <p class="submit-prep-subtitle" id="admin-journals-msg"></p>
+        <div class="submit-prep-card" style="overflow-x: auto">
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px; min-width: 960px">
+            <thead>
+              <tr>
+                <th style="text-align:left;padding:8px;border-bottom:1px solid #e5e7eb">Title</th>
+                <th style="text-align:left;padding:8px;border-bottom:1px solid #e5e7eb">Author</th>
+                <th style="text-align:left;padding:8px;border-bottom:1px solid #e5e7eb">Status</th>
+                <th style="text-align:left;padding:8px;border-bottom:1px solid #e5e7eb">Author feedback</th>
+                <th style="text-align:left;padding:8px;border-bottom:1px solid #e5e7eb">Submitted</th>
+                <th style="text-align:left;padding:8px;border-bottom:1px solid #e5e7eb">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-journals-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="submit-prep-container" style="margin-bottom: 36px">
+        <h2 class="submit-prep-title" id="issue-form-heading">Create new issue</h2>
+        <p class="submit-prep-subtitle" id="issue-form-subtitle">
+          New issues start in review and are hidden from the public site until you approve them.
+        </p>
+
+        <form id="issue-form" class="submit-prep-card" style="margin-bottom: 28px">
+          <div class="submit-prep-columns">
+            <div class="submit-prep-column">
+              <label>Journal title</label>
+              <input type="text" id="issue-journalTitle" style="width:100%;margin-bottom:10px" placeholder="The Nexus Journal of Research and Innovation" />
+
+              <label>Volume *</label>
+              <input type="number" id="issue-volume" required style="width:100%;margin-bottom:10px" placeholder="5" />
+
+              <label>Issue number *</label>
+              <input type="number" id="issue-number" required style="width:100%;margin-bottom:10px" placeholder="1" />
+            </div>
+            <div class="submit-prep-column">
+              <label>Month *</label>
+              <input type="text" id="issue-month" required style="width:100%;margin-bottom:10px" placeholder="March" />
+
+              <label>Year *</label>
+              <input type="number" id="issue-year" required style="width:100%;margin-bottom:10px" placeholder="2026" />
+
+              <label>Issue PDF URL (optional)</label>
+              <input type="text" id="issue-pdfUrl" style="width:100%;margin-bottom:10px" placeholder="https://.../vol5-issue1.pdf" />
+            </div>
+          </div>
+
+          <label>Description (optional)</label>
+          <textarea id="issue-description" rows="3" style="width:100%;margin-bottom:14px" placeholder="Short description of this issue."></textarea>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button type="submit" class="submit-start-btn" id="issue-submit-btn" style="max-width:200px">Create issue</button>
+            <button type="button" class="submit-start-btn" id="issue-cancel-edit-btn" style="display:none;max-width:160px;background:#e5e7eb;color:#111827">
+              Cancel edit
+            </button>
+          </div>
+          <p id="issue-message" class="submit-subtitle" style="margin-top:10px"></p>
+        </form>
+
+        <h2 class="submit-prep-title">All issues</h2>
+        <div class="submit-prep-card" style="overflow-x: auto">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:680px">
+            <thead>
+              <tr>
+                <th style="text-align:left;padding:8px;border-bottom:1px solid #e5e7eb">Volume / issue</th>
+                <th style="text-align:left;padding:8px;border-bottom:1px solid #e5e7eb">Period</th>
+                <th style="text-align:left;padding:8px;border-bottom:1px solid #e5e7eb">Status</th>
+                <th style="text-align:left;padding:8px;border-bottom:1px solid #e5e7eb">Created</th>
+                <th style="text-align:left;padding:8px;border-bottom:1px solid #e5e7eb">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="issue-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <p style="text-align: center; margin-top: 24px">
+        <a href="/" class="submit-start-btn" style="display:inline-block;max-width:260px;text-decoration:none;text-align:center">&larr; Back to website</a>
+      </p>
+    </main>
+
+    <div id="footer"></div>
+
+    <script src="./app.js"></script>
+    <script src="./footer.js"></script>
+    <script src="./header.js"></script>
+    <script>
+      (function () {
+        var journalsMsg = document.getElementById("admin-journals-msg");
+        var journalsBody = document.getElementById("admin-journals-body");
+        var form = document.getElementById("issue-form");
+        var msg = document.getElementById("issue-message");
+        var heading = document.getElementById("issue-form-heading");
+        var subtitle = document.getElementById("issue-form-subtitle");
+        var submitBtn = document.getElementById("issue-submit-btn");
+        var cancelEditBtn = document.getElementById("issue-cancel-edit-btn");
+        var tableBody = document.getElementById("issue-table-body");
+        var editingId = null;
+
+        function journalStatusLabel(s) {
+          if (!s || s === "submitted") return "Published";
+          if (s === "under_review") return "In review";
+          if (s === "resubmitted") return "Resubmitted";
+          if (s === "accepted") return "Approved";
+          if (s === "rejected") return "Rejected";
+          if (s === "draft") return "Draft";
+          return s;
+        }
+
+        function issueStatusLabel(s) {
+          if (!s) return "Approved";
+          if (s === "under_review") return "In review";
+          if (s === "accepted") return "Approved";
+          if (s === "rejected") return "Rejected";
+          return s;
+        }
+
+        function badgeStyle(label) {
+          var bg = "#e5e7eb";
+          var fg = "#111827";
+          if (label === "In review") {
+            bg = "#fef3c7";
+            fg = "#92400e";
+          } else if (label === "Resubmitted") {
+            bg = "#e0f2fe";
+            fg = "#0369a1";
+          } else if (label === "Approved" || label === "Published") {
+            bg = "#d1fae5";
+            fg = "#065f46";
+          } else if (label === "Rejected") {
+            bg = "#fee2e2";
+            fg = "#991b1b";
+          } else if (label === "Draft") {
+            bg = "#e0e7ff";
+            fg = "#3730a3";
+          }
+          return "padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;background:" + bg + ";color:" + fg;
+        }
+
+        function authorLabel(a) {
+          if (!a) return "—";
+          if (a.email) return a.email;
+          return [a.firstName, a.lastName].filter(Boolean).join(" ") || "—";
+        }
+
+        fetch("/api/auth/me", { credentials: "include" })
+          .then(function (res) {
+            if (!res.ok) throw new Error("not auth");
+            return res.json();
+          })
+          .then(function (data) {
+            if (!data.user || data.user.role !== "admin") {
+              window.location.href = "/login.html";
+              return;
+            }
+            loadJournals();
+            loadIssues();
+          })
+          .catch(function () {
+            window.location.href = "/login.html";
+          });
+
+        function loadJournals() {
+          if (!journalsBody) return;
+              journalsBody.innerHTML =
+                '<tr><td colspan="6" style="padding:8px;">Loading…</td></tr>';
+          fetch("/api/admin/journals", { credentials: "include" })
+            .then(function (res) {
+              if (res.status === 403 || res.status === 401) {
+                window.location.href = "/login.html";
+                throw new Error("auth");
+              }
+              return res.json();
+            })
+            .then(function (rows) {
+              if (!Array.isArray(rows) || rows.length === 0) {
+                journalsBody.innerHTML =
+                  '<tr><td colspan="6" style="padding:8px;">No submissions yet.</td></tr>';
+                return;
+              }
+              journalsBody.innerHTML = "";
+              rows.forEach(function (j) {
+                var tr = document.createElement("tr");
+                function td(inner) {
+                  var cell = document.createElement("td");
+                  cell.style.padding = "8px";
+                  cell.style.borderBottom = "1px solid #e5e7eb";
+                  cell.style.verticalAlign = "top";
+                  if (typeof inner === "string") cell.textContent = inner;
+                  else cell.appendChild(inner);
+                  return cell;
+                }
+
+                var titleTd = document.createElement("td");
+                titleTd.style.padding = "8px";
+                titleTd.style.borderBottom = "1px solid #e5e7eb";
+                titleTd.style.verticalAlign = "top";
+                var tLink = document.createElement("a");
+                tLink.href = "/journal.html?id=" + encodeURIComponent(j._id);
+                tLink.textContent = j.title || "(Untitled)";
+                tLink.target = "_blank";
+                tLink.rel = "noopener";
+                titleTd.appendChild(tLink);
+
+                var st = journalStatusLabel(j.status);
+                var badge = document.createElement("span");
+                badge.style.cssText = badgeStyle(st);
+                badge.textContent = st;
+
+                var dateStr = "";
+                if (j.createdAt) dateStr = new Date(j.createdAt).toLocaleString();
+
+                var actions = document.createElement("div");
+                actions.style.display = "flex";
+                actions.style.flexWrap = "wrap";
+                actions.style.gap = "6px";
+
+                if (
+                  j.status === "under_review" ||
+                  j.status === "rejected" ||
+                  j.status === "resubmitted"
+                ) {
+                  var ap = document.createElement("button");
+                  ap.textContent = "Approve";
+                  ap.className = "submit-start-btn";
+                  ap.style.padding = "4px 10px";
+                  ap.style.fontSize = "11px";
+                  ap.style.maxWidth = "90px";
+                  ap.onclick = function () {
+                    reviewJournal(j._id, "approve");
+                  };
+
+                  var rj = document.createElement("button");
+                  rj.textContent = "Reject";
+                  rj.className = "submit-start-btn";
+                  rj.style.padding = "4px 10px";
+                  rj.style.fontSize = "11px";
+                  rj.style.maxWidth = "90px";
+                  rj.style.background = "#dc2626";
+                  rj.style.color = "#fff";
+                  rj.onclick = function () {
+                    rejectJournalWithPrompt(j._id);
+                  };
+                  actions.appendChild(ap);
+                  actions.appendChild(rj);
+                }
+
+                var feedbackCell = document.createElement("td");
+                feedbackCell.style.padding = "8px";
+                feedbackCell.style.borderBottom = "1px solid #e5e7eb";
+                feedbackCell.style.verticalAlign = "top";
+                feedbackCell.style.maxWidth = "260px";
+                feedbackCell.style.fontSize = "12px";
+                feedbackCell.style.color = "#4b5563";
+                feedbackCell.style.whiteSpace = "pre-wrap";
+                if (j.rejectionFeedback && String(j.rejectionFeedback).trim()) {
+                  feedbackCell.textContent = j.rejectionFeedback;
+                } else {
+                  feedbackCell.textContent = "—";
+                }
+
+                tr.appendChild(titleTd);
+                tr.appendChild(td(document.createTextNode(authorLabel(j.author))));
+                tr.appendChild(td(badge));
+                tr.appendChild(feedbackCell);
+                tr.appendChild(td(dateStr));
+                tr.appendChild(td(actions));
+
+                journalsBody.appendChild(tr);
+              });
+              if (journalsMsg) journalsMsg.textContent = rows.length + " record(s)";
+            })
+            .catch(function () {
+              if (journalsBody)
+                journalsBody.innerHTML =
+                  '<tr><td colspan="6" style="padding:8px;">Unable to load manuscripts.</td></tr>';
+            });
+        }
+
+        function rejectJournalWithPrompt(id) {
+          var fb = window.prompt(
+            "Rejection feedback for the author (required). They will see this and should address it before resubmitting:",
+            "",
+          );
+          if (fb === null) return;
+          fb = String(fb).trim();
+          if (!fb) {
+            alert("Feedback is required to reject a manuscript.");
+            return;
+          }
+          reviewJournal(id, "reject", fb);
+        }
+
+        function reviewJournal(id, decision, rejectionFeedback) {
+          var body = { decision: decision };
+          if (decision === "reject" && rejectionFeedback) {
+            body.rejectionFeedback = rejectionFeedback;
+          }
+          fetch("/api/admin/journals/" + encodeURIComponent(id) + "/review", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(body),
+          })
+            .then(function (res) {
+              return res.json().then(function (data) {
+                return { ok: res.ok, data: data };
+              });
+            })
+            .then(function (result) {
+              if (!result.ok) {
+                alert(result.data.message || "Update failed.");
+                return;
+              }
+              loadJournals();
+            })
+            .catch(function () {
+              alert("Network error.");
+            });
+        }
+
+        function resetForm() {
+          editingId = null;
+          form.reset();
+          if (heading) heading.textContent = "Create new issue";
+          if (subtitle)
+            subtitle.textContent =
+              "New issues start in review and are hidden from the public site until you approve them.";
+          if (submitBtn) submitBtn.textContent = "Create issue";
+          if (cancelEditBtn) cancelEditBtn.style.display = "none";
+          if (msg) msg.textContent = "";
+        }
+
+        function setFormFromIssue(issue) {
+          document.getElementById("issue-journalTitle").value = issue.journalTitle || "";
+          document.getElementById("issue-volume").value = issue.volume || "";
+          document.getElementById("issue-number").value = issue.issueNumber || "";
+          document.getElementById("issue-month").value = issue.month || "";
+          document.getElementById("issue-year").value = issue.year || "";
+          document.getElementById("issue-pdfUrl").value = issue.pdfUrl || "";
+          document.getElementById("issue-description").value = issue.description || "";
+        }
+
+        if (cancelEditBtn) {
+          cancelEditBtn.addEventListener("click", function () {
+            resetForm();
+          });
+        }
+
+        if (form) {
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            if (msg) msg.textContent = "";
+
+            var body = {
+              journalTitle: document.getElementById("issue-journalTitle").value.trim() || undefined,
+              volume: Number(document.getElementById("issue-volume").value),
+              issueNumber: Number(document.getElementById("issue-number").value),
+              month: document.getElementById("issue-month").value.trim(),
+              year: Number(document.getElementById("issue-year").value),
+              pdfUrl: document.getElementById("issue-pdfUrl").value.trim() || undefined,
+              description: document.getElementById("issue-description").value.trim() || undefined,
+            };
+
+            if (!body.volume || !body.issueNumber || !body.month || !body.year) {
+              alert("Please fill in volume, issue number, month, and year.");
+              return;
+            }
+
+            var endpoint = editingId
+              ? "/api/admin/issues/" + encodeURIComponent(editingId)
+              : "/api/admin/issues";
+            var method = editingId ? "PUT" : "POST";
+
+            fetch(endpoint, {
+              method: method,
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify(body),
+            })
+              .then(function (res) {
+                return res.json().then(function (data) {
+                  return { ok: res.ok, status: res.status, data: data };
+                });
+              })
+              .then(function (result) {
+                if (result.status === 401 || result.status === 403) {
+                  window.location.href = "/login.html";
+                  return;
+                }
+                if (!result.ok) {
+                  if (msg) msg.textContent = result.data.message || "Request failed.";
+                  else alert(result.data.message || "Request failed.");
+                  return;
+                }
+                var wasEdit = !!editingId;
+                resetForm();
+                loadIssues();
+                if (msg) msg.textContent = wasEdit ? "Issue updated." : "Issue created (in review).";
+              })
+              .catch(function () {
+                if (msg) msg.textContent = "Network error.";
+              });
+          });
+        }
+
+        function reviewIssue(id, decision) {
+          fetch("/api/admin/issues/" + encodeURIComponent(id) + "/review", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ decision: decision }),
+          })
+            .then(function (res) {
+              return res.json().then(function (data) {
+                return { ok: res.ok, data: data };
+              });
+            })
+            .then(function (result) {
+              if (!result.ok) {
+                alert(result.data.message || "Update failed.");
+                return;
+              }
+              loadIssues();
+            })
+            .catch(function () {
+              alert("Network error.");
+            });
+        }
+
+        function loadIssues() {
+          if (!tableBody) return;
+          tableBody.innerHTML =
+            '<tr><td colspan="5" style="padding:8px;">Loading…</td></tr>';
+          fetch("/api/admin/issues", { credentials: "include" })
+            .then(function (res) {
+              if (res.status === 401 || res.status === 403) {
+                window.location.href = "/login.html";
+                throw new Error("auth");
+              }
+              return res.json();
+            })
+            .then(function (issues) {
+              if (!Array.isArray(issues) || issues.length === 0) {
+                tableBody.innerHTML =
+                  '<tr><td colspan="5" style="padding:8px;">No issues yet.</td></tr>';
+                return;
+              }
+              tableBody.innerHTML = "";
+              issues.forEach(function (issue) {
+                var tr = document.createElement("tr");
+
+                function td(content) {
+                  var cell = document.createElement("td");
+                  cell.style.padding = "8px";
+                  cell.style.borderBottom = "1px solid #e5e7eb";
+                  cell.style.verticalAlign = "top";
+                  if (typeof content === "string") cell.textContent = content;
+                  else cell.appendChild(content);
+                  return cell;
+                }
+
+                var st = issueStatusLabel(issue.status);
+                var badge = document.createElement("span");
+                badge.style.cssText = badgeStyle(st);
+                badge.textContent = st;
+
+                var dateStr = "";
+                if (issue.createdAt) dateStr = new Date(issue.createdAt).toLocaleDateString();
+
+                var actionsTd = document.createElement("td");
+                actionsTd.style.padding = "8px";
+                actionsTd.style.borderBottom = "1px solid #e5e7eb";
+
+                var editBtn = document.createElement("button");
+                editBtn.textContent = "Edit";
+                editBtn.className = "submit-start-btn";
+                editBtn.style.marginRight = "6px";
+                editBtn.style.padding = "4px 10px";
+                editBtn.style.fontSize = "11px";
+                editBtn.onclick = function () {
+                  editingId = issue._id;
+                  setFormFromIssue(issue);
+                  if (heading) heading.textContent = "Edit issue";
+                  if (subtitle)
+                    subtitle.textContent = "Saving changes keeps the issue in the workflow until you approve it.";
+                  if (submitBtn) submitBtn.textContent = "Update issue";
+                  if (cancelEditBtn) cancelEditBtn.style.display = "inline-block";
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                };
+
+                actionsTd.appendChild(editBtn);
+
+                if (issue.status === "under_review" || issue.status === "rejected") {
+                  var ap = document.createElement("button");
+                  ap.textContent = "Approve";
+                  ap.className = "submit-start-btn";
+                  ap.style.marginRight = "6px";
+                  ap.style.padding = "4px 10px";
+                  ap.style.fontSize = "11px";
+                  ap.onclick = function () {
+                    reviewIssue(issue._id, "approve");
+                  };
+                  actionsTd.appendChild(ap);
+
+                  if (issue.status === "under_review") {
+                    var rj = document.createElement("button");
+                    rj.textContent = "Reject";
+                    rj.style.background = "#dc2626";
+                    rj.style.color = "#fff";
+                    rj.className = "submit-start-btn";
+                    rj.style.marginRight = "6px";
+                    rj.style.padding = "4px 10px";
+                    rj.style.fontSize = "11px";
+                    rj.onclick = function () {
+                      if (!confirm("Reject this issue? It will remain here but stay off the public site."))
+                        return;
+                      reviewIssue(issue._id, "reject");
+                    };
+                    actionsTd.appendChild(rj);
+                  }
+                }
+
+                var delBtn = document.createElement("button");
+                delBtn.textContent = "Delete";
+                delBtn.style.background = "#b91c1c";
+                delBtn.style.color = "#fff";
+                delBtn.className = "submit-start-btn";
+                delBtn.style.padding = "4px 10px";
+                delBtn.style.fontSize = "11px";
+                delBtn.onclick = function () {
+                  if (!confirm("Delete this issue permanently?")) return;
+                  fetch("/api/admin/issues/" + encodeURIComponent(issue._id), {
+                    method: "DELETE",
+                    credentials: "include",
+                  })
+                    .then(function (res) {
+                      return res.ok;
+                    })
+                    .then(function (ok) {
+                      if (!ok) {
+                        alert("Delete failed.");
+                        return;
+                      }
+                      resetForm();
+                      loadIssues();
+                    })
+                    .catch(function () {
+                      alert("Network error.");
+                    });
+                };
+                actionsTd.appendChild(delBtn);
+
+                tr.appendChild(
+                  td("Vol. " + issue.volume + ", Issue " + issue.issueNumber),
+                );
+                tr.appendChild(td((issue.month || "") + " " + (issue.year || "")));
+                tr.appendChild(td(badge));
+                tr.appendChild(td(dateStr));
+                tr.appendChild(actionsTd);
+
+                tableBody.appendChild(tr);
+              });
+            })
+            .catch(function () {
+              tableBody.innerHTML =
+                '<tr><td colspan="5" style="padding:8px;">Unable to load issues.</td></tr>';
+            });
+        }
+      })();
+    </script>
+  </body>
+</html>

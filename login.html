@@ -122,8 +122,13 @@
                         return;
                     }
 
-                    // logged in successfully
-                    window.location.href = '/';
+                    // logged in successfully — admins go to admin panel
+                    var role = data.user && data.user.role;
+                    if (role === 'admin') {
+                        window.location.href = '/admin.html';
+                    } else {
+                        window.location.href = '/';
+                    }
                 } catch (err) {
                     console.error(err);
                     alert('Network error while logging in.');

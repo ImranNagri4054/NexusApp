@@ -5,6 +5,7 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const GitHubStrategy = require("passport-github2").Strategy;
 const User = require("../models/User");
+const { syncAdminRole } = require("../utils/adminPromotion");
 
 const router = express.Router();
 
@@ -14,9 +15,7 @@ const HAS_GOOGLE = !!(
   process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
 );
 const HAS_GITHUB = !!(
-  process.env.GITHUB_CLIENT_ID ||
-  ("" && process.env.GITHUB_CLIENT_SECRET) ||
-  ""
+  process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET
 );
 
 // ----- Passport setup for OAuth -----
@@ -120,10 +119,21 @@ function generateToken(user) {
     {
       id: user._id,
       email: user.email,
+      role: user.role || "user",
     },
     JWT_SECRET,
     { expiresIn: "7d" },
   );
+}
+
+function serializeUserLite(userDoc) {
+  return {
+    id: userDoc._id,
+    email: userDoc.email,
+    firstName: userDoc.firstName,
+    lastName: userDoc.lastName,
+    role: userDoc.role || "user",
+  };
 }
 
 // ----- Local Register -----
@@ -164,12 +174,13 @@ router.post("/register", async (req, res) => {
       passwordHash,
     });
 
+    await syncAdminRole(user);
     const token = generateToken(user);
     res
       .cookie("token", token, { httpOnly: true, sameSite: "lax" })
       .status(201)
       .json({
-        user: { id: user._id, email: user.email, firstName: user.firstName },
+        user: serializeUserLite(user),
       });
   } catch (err) {
     res.status(500).json({ message: "Registration failed" });
@@ -196,9 +207,10 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    await syncAdminRole(user);
     const token = generateToken(user);
     res.cookie("token", token, { httpOnly: true, sameSite: "lax" }).json({
-      user: { id: user._id, email: user.email, firstName: user.firstName },
+      user: serializeUserLite(user),
     });
   } catch (err) {
     res.status(500).json({ message: "Login failed" });
@@ -217,10 +229,17 @@ if (HAS_GOOGLE) {
     passport.authenticate("google", {
       failureRedirect: `${CLIENT_URL}/login.html`,
     }),
-    (req, res) => {
-      const token = generateToken(req.user);
-      res.cookie("token", token, { httpOnly: true, sameSite: "lax" });
-      res.redirect(`${CLIENT_URL}/`);
+    async (req, res) => {
+      try {
+        await syncAdminRole(req.user);
+        const token = generateToken(req.user);
+        res.cookie("token", token, { httpOnly: true, sameSite: "lax" });
+        const dest =
+          req.user.role === "admin" ? `/admin.html` : `${CLIENT_URL}/`;
+        res.redirect(dest);
+      } catch (err) {
+        res.redirect(`${CLIENT_URL}/login.html`);
+      }
     },
   );
 } else {
@@ -243,10 +262,17 @@ if (HAS_GITHUB) {
     passport.authenticate("github", {
       failureRedirect: `${CLIENT_URL}/login.html`,
     }),
-    (req, res) => {
-      const token = generateToken(req.user);
-      res.cookie("token", token, { httpOnly: true, sameSite: "lax" });
-      res.redirect(`${CLIENT_URL}/`);
+    async (req, res) => {
+      try {
+        await syncAdminRole(req.user);
+        const token = generateToken(req.user);
+        res.cookie("token", token, { httpOnly: true, sameSite: "lax" });
+        const dest =
+          req.user.role === "admin" ? `/admin.html` : `${CLIENT_URL}/`;
+        res.redirect(dest);
+      } catch (err) {
+        res.redirect(`${CLIENT_URL}/login.html`);
+      }
     },
   );
 } else {
@@ -279,18 +305,14 @@ router.get("/me", async (req, res) => {
     }
 
     const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await User.findById(decoded.id).lean();
-    if (!user) {
+    const userDoc = await User.findById(decoded.id);
+    if (!userDoc) {
       return res.status(401).json({ message: "Not authenticated" });
     }
 
+    await syncAdminRole(userDoc);
     res.json({
-      user: {
-        id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-      },
+      user: serializeUserLite(userDoc),
     });
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired token" });
